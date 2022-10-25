@@ -1,5 +1,5 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Enums;
-using OnboardingIntegrationExample.AwesomeShop.Domain.PrimitiveTypes;
+using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 

@@ -1,4 +1,4 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.PrimitiveTypes;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 [StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
 public partial struct UserId
