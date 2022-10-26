@@ -2,7 +2,7 @@
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Customers.Queries.GetCustomer;
 
-public class GetUserQueryHandler : IQueryHandler<GetCustomerQuery, CustomerDto>
+public sealed class GetUserQueryHandler : IQueryHandler<GetCustomerQuery, CustomerDto>
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IMapper _mapper;

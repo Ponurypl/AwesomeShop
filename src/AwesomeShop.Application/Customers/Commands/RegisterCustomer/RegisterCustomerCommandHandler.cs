@@ -5,7 +5,7 @@ using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Customers.Commands.RegisterCustomer;
 
-public class RegisterCustomerCommandHandler : ICommandHandler<RegisterCustomerCommand>
+public sealed class RegisterCustomerCommandHandler : ICommandHandler<RegisterCustomerCommand>
 {
     private readonly ICryptoService _cryptoService;
     private readonly IUsersRepository _usersRepository;
