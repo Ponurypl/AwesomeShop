@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Mapster;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application;
@@ -10,6 +10,8 @@ public static class ConfigureServices
     {
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(Assembly.GetExecutingAssembly());
+
+        services.AddMediatR(Assembly.GetExecutingAssembly());
 
         return services;
     }
