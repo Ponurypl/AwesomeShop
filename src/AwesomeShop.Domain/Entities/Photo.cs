@@ -1,6 +1,4 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
-
-namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
 public sealed class Photo
 {

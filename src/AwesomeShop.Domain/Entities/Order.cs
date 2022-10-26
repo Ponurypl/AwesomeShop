@@ -1,7 +1,4 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Enums;
-using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
-
-namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
 public sealed class Order
 {

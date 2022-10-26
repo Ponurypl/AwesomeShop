@@ -1,8 +1,6 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
-
-public class OrderItem
+public sealed class OrderItem
 {
     public OrderItemId Id { get; set; }
     public Product Product { get; set; } = null!;

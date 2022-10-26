@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
-
-namespace OnboardingIntegrationExample.AwesomeShop.Domain.Validators;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Validators;
 
 public class UserValidator : AbstractValidator<User>
 {

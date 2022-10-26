@@ -1,10 +1,6 @@
-﻿using FluentValidation;
-using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
-using OnboardingIntegrationExample.AwesomeShop.Domain.Validators;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
-
-public class User
+public sealed class User
 {
     public UserId Id { get; }
     public string Username { get; } 
