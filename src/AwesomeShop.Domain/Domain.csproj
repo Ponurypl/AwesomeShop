@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
     <PackageReference Include="StronglyTypedId" Version="0.2.1" />
   </ItemGroup>
 </Project>
