@@ -1,7 +1,12 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Abstractions;
 
-public sealed class Category 
+namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+
+public sealed class Category : Entity<CategoryId>
 {
-    public CategoryId Id { get; set; }
     public string CategoryName { get; set; } = default!;
+
+    public Category(CategoryId id) : base(id)
+    {
+    }
 }

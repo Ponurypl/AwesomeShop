@@ -1,17 +1,18 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Abstractions;
 
-public sealed class User
+namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+
+public sealed class User : Entity<UserId>
 {
-    public UserId Id { get; }
     public string Username { get; } 
     public string PasswordHash { get; } 
     public string FirstName { get; } 
     public string LastName { get; }
-    public string EmailAddress { get; } 
+    public string EmailAddress { get; }
 
     private User(string username, string passwordHash, string firstName, string lastName, string emailAddress)
+        : base(UserId.New())
     {
-        Id = UserId.New();
         Username = username;
         PasswordHash = passwordHash;
         FirstName = firstName;

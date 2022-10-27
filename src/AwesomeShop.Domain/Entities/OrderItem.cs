@@ -1,10 +1,31 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Abstractions;
 
-public sealed class OrderItem
+namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+
+public sealed class OrderItem : Entity<OrderItemId>
 {
-    public OrderItemId Id { get; set; }
-    public Product Product { get; set; } = null!;
-    public int Quantity { get; set; }
-    public double Price { get; set; }
-    public double Summary { get; set; }
+    public Product Product { get; }
+    public int Quantity { get; private set; }
+    public double Price { get; }
+    public double Summary => Price * Quantity;
+
+    private OrderItem(Product product, int quantity) : base(OrderItemId.New())
+    {
+        Product = product;
+        Quantity = quantity;
+        Price = product.Price;
+    }
+
+    internal static OrderItem Create(Product product, int quantity)
+    {
+        if (product is null) throw new ArgumentNullException(nameof(product));
+        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+
+        return new OrderItem(product, quantity);
+    }
+
+    public void ChangeQuantity(int offset)
+    {
+        Quantity += offset;
+    }
 }
