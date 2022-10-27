@@ -15,7 +15,7 @@ public sealed class GetUserQueryHandler : IQueryHandler<GetCustomerQuery, Custom
 
     public async Task<Result<CustomerDto>> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
     {
-        var user = await _usersRepository.GetByUsernameAsync(request.username, cancellationToken);
+        var user = await _usersRepository.GetByUsernameAsync(request.Username, cancellationToken);
 
         if (user is null)
         {

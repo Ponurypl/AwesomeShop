@@ -2,4 +2,4 @@
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Products.Queries.GetCategoryProducts;
 
-public sealed record GetCategoryProductsQuery(Guid categoryId) : IQuery<List<ProductDto>>;
+public sealed record GetCategoryProductsQuery(Guid CategoryId) : IQuery<List<ProductDto>>;

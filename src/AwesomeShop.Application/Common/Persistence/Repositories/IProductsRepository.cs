@@ -4,5 +4,6 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistenc
 
 public interface IProductsRepository
 {
-    Task<List<Product>> GetByCategoryAsync(Guid categoryId);
+    Task<List<Product>> GetByCategoryAsync(Guid categoryId, CancellationToken cancellationToken);
+    Task<Product?> GetByIdAsync(Guid productId, CancellationToken cancellationToken);
 }
