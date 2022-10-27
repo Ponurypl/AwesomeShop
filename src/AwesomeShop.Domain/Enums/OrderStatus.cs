@@ -2,5 +2,5 @@
 
 public enum OrderStatus
 {
-    Cart, New, WaitingForPayment, Paid, Sent
+    Cart, Created, WaitingForPayment, Paid, Sent
 }
