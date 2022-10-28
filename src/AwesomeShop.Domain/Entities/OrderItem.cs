@@ -25,9 +25,16 @@ public sealed class OrderItem : Entity<OrderItemId>
         return new OrderItem(productId, quantity, price);
     }
 
-    public void ChangeQuantity(int offset, double price)
+    public void OffsetQuantity(int offset)
     {
+        if (offset == 0) throw new ArgumentOutOfRangeException(nameof(offset));
         Quantity += offset;
-        Price = price;
+    }
+
+    public void OverrideQuantity(int quantity)
+    {
+        if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+
+        Quantity = quantity;
     }
 }

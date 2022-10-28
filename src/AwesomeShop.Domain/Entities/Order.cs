@@ -23,7 +23,7 @@ public sealed class Order : Entity<OrderId>
         return new Order(customerId);
     }
 
-    public void AddProduct(ProductId productId, int quantity, double price)
+    public void AddOrderItem(ProductId productId, int quantity, double price)
     {
         var item = _items.FirstOrDefault(i => i.ProductId == productId);
         if (item is null)
@@ -33,16 +33,22 @@ public sealed class Order : Entity<OrderId>
         }
         else
         {
-            item.ChangeQuantity(quantity, price);
+            item.OffsetQuantity(quantity);
         }
     }
 
-    public void RemoveProduct(OrderItemId orderItemId)
+    public void RemoveOrderItem(OrderItemId orderItemId)
     {
         var item = _items.FirstOrDefault(i => i.Id == orderItemId);
         if (item is not null)
         {
             _items.Remove(item);
         }
+    }
+
+    public void ChangeOrderItem(OrderItemId orderItemId, int quantity)
+    {
+        var item = _items.FirstOrDefault(i => i.Id == orderItemId);
+        item?.OverrideQuantity(quantity);
     }
 }
