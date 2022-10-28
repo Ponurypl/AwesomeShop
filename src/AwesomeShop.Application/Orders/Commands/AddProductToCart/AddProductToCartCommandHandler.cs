@@ -1,6 +1,7 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.AddProductToCart;
 
@@ -39,7 +40,7 @@ public sealed class AddProductToCartCommandHandler : ICommandHandler<AddProductT
             _ordersRepository.Add(order);
         }
 
-        var product = await _productsRepository.GetByIdAsync(request.ProductId, cancellationToken);
+        var product = await _productsRepository.GetByIdAsync(new ProductId(request.ProductId), cancellationToken);
         if (product is null)
         {
             return Result.Failure(Failures.InvalidProduct);

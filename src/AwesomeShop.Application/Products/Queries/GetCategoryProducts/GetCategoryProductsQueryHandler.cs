@@ -1,5 +1,6 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Application.Products.Queries.GetCategoryProducts.Dto;
+using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Products.Queries.GetCategoryProducts;
 
@@ -16,7 +17,7 @@ public sealed class GetCategoryProductsQueryHandler : IQueryHandler<GetCategoryP
 
     public async Task<Result<List<ProductDto>>> Handle(GetCategoryProductsQuery request, CancellationToken cancellationToken)
     {
-        var products = await _productsRepository.GetByCategoryAsync(request.CategoryId, cancellationToken);
+        var products = await _productsRepository.GetByCategoryAsync(new CategoryId(request.CategoryId), cancellationToken);
 
         return _mapper.Map<List<ProductDto>>(products);
     }
