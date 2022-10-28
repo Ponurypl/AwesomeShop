@@ -24,5 +24,7 @@ public class UpdateProductsInCartCommandHandler : ICommandHandler<UpdateProducts
         {
             order.ChangeOrderItem(new OrderItemId(cartItem.OrderItemId), cartItem.Quantity);
         }
+
+        return Result.Success();
     }
 }
