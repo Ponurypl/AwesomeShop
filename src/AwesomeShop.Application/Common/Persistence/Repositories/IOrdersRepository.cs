@@ -4,6 +4,6 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistenc
 
 public interface IOrdersRepository
 {
-    Task<Order?> GetCartOrderByUsernameAsync(string username, CancellationToken cancellationToken);
+    Task<Order?> GetCartOrderByUsernameAsync(string username, CancellationToken cancellationToken = default);
     void Add(Order order);
 }

@@ -4,5 +4,5 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistenc
 
 public interface ICategoriesRepository
 {
-    Task<List<Category>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<Category>> GetAllAsync(CancellationToken cancellationToken = default);
 }
