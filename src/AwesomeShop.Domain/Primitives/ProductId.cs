@@ -1,6 +1,6 @@
 ﻿namespace OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
-[StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
+[StronglyTypedId(converters: StronglyTypedIdConverter.SystemTextJson | StronglyTypedIdConverter.EfCoreValueConverter)]
 public partial struct ProductId
 {
     

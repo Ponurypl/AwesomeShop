@@ -9,8 +9,6 @@ public sealed class Product : Entity<ProductId>
     public AvailabilityStatus Availability { get; set; }
     public double Price { get; set; }
     public CategoryId CategoryId { get; set; }
-    public PhotoId Thumbnail { get; set; }
-    public List<PhotoId> Photos { get; set; } = new();
 
     public Product(ProductId id) : base(id)
     {
