@@ -6,6 +6,6 @@ public static class Failures
     public static Error InvalidProduct => new(nameof(InvalidProduct), "Invalid product Id");
     public static Error InvalidQuantity => new(nameof(InvalidQuantity), "Invalid quantity");
 
-    public static Error NoOpenCart =
+    public static Error NoOpenCart =>
         new(nameof(NoOpenCart), "Given user doesn't have open cart");
 }
