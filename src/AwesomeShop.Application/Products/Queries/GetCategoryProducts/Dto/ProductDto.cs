@@ -7,6 +7,5 @@ public sealed class ProductDto
     public string Description { get; set; } = default!;
     public AvailabilityStatusDto Availability { get; set; }
     public double Price { get; set; }
-    public PhotoDto? Thumbnail { get; set; }
-    public List<PhotoDto> Photos { get; set; } = new();
+    public string? ThumbnailFileName { get; set; }
 }

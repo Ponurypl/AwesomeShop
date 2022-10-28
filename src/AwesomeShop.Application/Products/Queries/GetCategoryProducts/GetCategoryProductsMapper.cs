@@ -8,8 +8,9 @@ public class GetCategoryProductsMapper : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Photo, PhotoDto>().Map(d => d.Id, s => s.Id.Value);
         config.NewConfig<AvailabilityStatus, AvailabilityStatusDto>();
-        config.NewConfig<Product, ProductDto>().Map(d => d.Id, s => s.Id.Value);
+        config.NewConfig<Product, ProductDto>()
+              .Map(d => d.Id, s => s.Id.Value)
+              .Ignore(d => d.ThumbnailFileName!);
     }
 }
