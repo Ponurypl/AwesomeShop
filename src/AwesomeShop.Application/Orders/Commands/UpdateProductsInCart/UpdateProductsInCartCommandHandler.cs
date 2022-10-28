@@ -1,4 +1,5 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
+﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
+using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.UpdateProductsInCart;
@@ -6,10 +7,12 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.U
 public class UpdateProductsInCartCommandHandler : ICommandHandler<UpdateProductsInCartCommand>
 {
     private readonly IOrdersRepository _ordersRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateProductsInCartCommandHandler(IOrdersRepository ordersRepository)
+    public UpdateProductsInCartCommandHandler(IOrdersRepository ordersRepository, IUnitOfWork unitOfWork)
     {
         _ordersRepository = ordersRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateProductsInCartCommand request, CancellationToken cancellationToken)
@@ -24,6 +27,8 @@ public class UpdateProductsInCartCommandHandler : ICommandHandler<UpdateProducts
         {
             order.ChangeOrderItem(new OrderItemId(cartItem.OrderItemId), cartItem.Quantity);
         }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
