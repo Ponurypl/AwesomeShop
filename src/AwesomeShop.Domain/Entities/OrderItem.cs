@@ -4,28 +4,30 @@ namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
 public sealed class OrderItem : Entity<OrderItemId>
 {
-    public Product Product { get; }
+    public ProductId ProductId { get; private set; }
     public int Quantity { get; private set; }
-    public double Price { get; }
+    public double Price { get; private set; }
     public double Summary => Price * Quantity;
 
-    private OrderItem(Product product, int quantity) : base(OrderItemId.New())
+    private OrderItem(ProductId productId, int quantity, double price) 
+        : base(OrderItemId.New())
     {
-        Product = product;
+        ProductId = productId;
         Quantity = quantity;
-        Price = product.Price;
+        Price = price;
     }
 
-    internal static OrderItem Create(Product product, int quantity)
+    internal static OrderItem Create(ProductId productId, int quantity, double price)
     {
-        if (product is null) throw new ArgumentNullException(nameof(product));
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+        if (price <= 0) throw new ArgumentOutOfRangeException(nameof(price));
 
-        return new OrderItem(product, quantity);
+        return new OrderItem(productId, quantity, price);
     }
 
-    public void ChangeQuantity(int offset)
+    public void ChangeQuantity(int offset, double price)
     {
         Quantity += offset;
+        Price = price;
     }
 }

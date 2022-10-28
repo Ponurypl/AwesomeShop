@@ -6,33 +6,34 @@ public sealed class Order : Entity<OrderId>
 {
     private readonly List<OrderItem> _items = new();
 
-    public User Customer { get; }
+    public UserId CustomerId { get; private set; }
     public IReadOnlyList<OrderItem> Items => _items;
-    public OrderStatus Status { get; }
+    public OrderStatus Status { get; private set; }
     public double Summary => Items.Sum(x => x.Summary);
 
-    private Order(User customer) : base(OrderId.New())
+    private Order(UserId customerId) 
+        : base(OrderId.New())
     {
         Status = OrderStatus.Cart;
-        Customer = customer;
+        CustomerId = customerId;
     }
 
-    public static Order Create(User customer)
+    public static Order Create(UserId customerId)
     {
-        return new Order(customer);
+        return new Order(customerId);
     }
 
-    public void AddProduct(Product product, int quantity)
+    public void AddProduct(ProductId productId, int quantity, double price)
     {
-        var item = _items.FirstOrDefault(i => i.Product == product);
+        var item = _items.FirstOrDefault(i => i.ProductId == productId);
         if (item is null)
         {
-            item = OrderItem.Create(product, quantity);
+            item = OrderItem.Create(productId, quantity, price);
             _items.Add(item);
         }
         else
         {
-            item.ChangeQuantity(quantity);
+            item.ChangeQuantity(quantity, price);
         }
     }
 

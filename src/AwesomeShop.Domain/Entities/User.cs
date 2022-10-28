@@ -4,11 +4,11 @@ namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
 public sealed class User : Entity<UserId>
 {
-    public string Username { get; } 
-    public string PasswordHash { get; } 
-    public string FirstName { get; } 
-    public string LastName { get; }
-    public string EmailAddress { get; }
+    public string Username { get; private set; } 
+    public string PasswordHash { get; private set; } 
+    public string FirstName { get; private set; } 
+    public string LastName { get; private set; }
+    public string EmailAddress { get; private set; }
 
     private User(string username, string passwordHash, string firstName, string lastName, string emailAddress)
         : base(UserId.New())

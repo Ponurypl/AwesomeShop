@@ -35,7 +35,7 @@ public sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProduct
             {
                 return Result.Failure(Failures.InvalidUsername);
             }
-            order = Order.Create(customer);
+            order = Order.Create(customer.Id);
             _ordersRepository.Add(order);
         }
 
@@ -45,7 +45,7 @@ public sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProduct
             return Result.Failure(Failures.InvalidProduct);
         }
 
-        order.AddProduct(product, request.Quantity);
+        order.AddProduct(product.Id, request.Quantity, product.Price);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
