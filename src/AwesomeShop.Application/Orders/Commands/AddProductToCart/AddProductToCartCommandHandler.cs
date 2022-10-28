@@ -2,16 +2,16 @@
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.AddProductToOrder;
+namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.AddProductToCart;
 
-public sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProductToOrderCommand>
+public sealed class AddProductToCartCommandHandler : ICommandHandler<AddProductToCartCommand>
 {
     private readonly IOrdersRepository _ordersRepository;
     private readonly IUsersRepository _usersRepository;
     private readonly IProductsRepository _productsRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AddProductToOrderCommandHandler(IOrdersRepository ordersRepository, IUsersRepository usersRepository,
+    public AddProductToCartCommandHandler(IOrdersRepository ordersRepository, IUsersRepository usersRepository,
         IProductsRepository productsRepository, IUnitOfWork unitOfWork)
     {
         _ordersRepository = ordersRepository;
@@ -20,7 +20,7 @@ public sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProduct
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddProductToCartCommand request, CancellationToken cancellationToken)
     {
         if (request.Quantity <= 0)
         {
@@ -45,7 +45,7 @@ public sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProduct
             return Result.Failure(Failures.InvalidProduct);
         }
 
-        order.AddProduct(product.Id, request.Quantity, product.Price);
+        order.AddOrderItem(product.Id, request.Quantity, product.Price);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
