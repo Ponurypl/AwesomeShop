@@ -17,7 +17,7 @@ public class RemoveProductFromCartCommandHandler : ICommandHandler<RemoveProduct
 
     public async Task<Result> Handle(RemoveProductFromCartCommand request, CancellationToken cancellationToken)
     {
-        var order = await _ordersRepository.GetCartOrderByUsernameAsync(request.Username, cancellationToken);
+        var order = await _ordersRepository.GetCartOrderByUserIdAsync(new UserId(request.UserId), cancellationToken);
         if (order is null)
         {
             return Result.Failure(Failures.NoOpenCart);

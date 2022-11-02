@@ -28,16 +28,17 @@ public sealed class AddProductToCartCommandHandler : ICommandHandler<AddProductT
             return Result.Failure(Failures.InvalidQuantity);
         }
 
-        var order = await _ordersRepository.GetCartOrderByUsernameAsync(request.Username, cancellationToken);
+        var userId = new UserId(request.UserId);
+        var order = await _ordersRepository.GetCartOrderByUserIdAsync(userId, cancellationToken);
         if (order is null)
         {
-            var customer = await _usersRepository.GetByUsernameAsync(request.Username, cancellationToken);
+            var customer = await _usersRepository.GetByIdAsync(userId, cancellationToken);
             if (customer is null)
             {
                 return Result.Failure(Failures.InvalidUsername);
             }
             order = Order.Create(customer.Id);
-            _ordersRepository.Add(order);
+            await _ordersRepository.AddAsync(order, cancellationToken);
         }
 
         var product = await _productsRepository.GetByIdAsync(new ProductId(request.ProductId), cancellationToken);

@@ -3,16 +3,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration.Configurations;
+namespace OnboardingIntegrationExample.AwesomeShop.Infrastructure.Persistence.Configurations;
 
 public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        builder.ToTable("categories");
-        builder.Property(x => x.Id).HasConversion<CategoryId.EfCoreValueConverter>().HasColumnName("id").IsRequired();
-        builder.Property(x=> x.CategoryName).HasColumnName("category_name").IsRequired();
+        builder.ToContainer("categories");
+        builder.HasPartitionKey(x => x.Id);
 
-        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).HasConversion<CategoryId.EfCoreValueConverter>().IsRequired();
+        builder.Property(x=> x.CategoryName).IsRequired();
     }
 }

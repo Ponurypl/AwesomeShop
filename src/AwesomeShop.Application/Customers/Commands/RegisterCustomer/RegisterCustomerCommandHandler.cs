@@ -36,7 +36,7 @@ public sealed class RegisterCustomerCommandHandler : ICommandHandler<RegisterCus
         var newUser = User.Create(request.Username, passHash, request.FirstName, request.LastName,
             request.EmailAddress);
 
-        _usersRepository.Add(newUser);
+        await _usersRepository.AddAsync(newUser, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

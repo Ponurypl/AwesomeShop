@@ -1,3 +1,3 @@
 ﻿namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.AddProductToCart;
 
-public sealed record AddProductToCartCommand(string Username, Guid ProductId, int Quantity) : ICommand;
+public sealed record AddProductToCartCommand(Guid UserId, Guid ProductId, int Quantity) : ICommand;
