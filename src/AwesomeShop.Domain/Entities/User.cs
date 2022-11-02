@@ -10,8 +10,8 @@ public sealed class User : Entity<UserId>
     public string LastName { get; private set; }
     public string EmailAddress { get; private set; }
 
-    private User(string username, string passwordHash, string firstName, string lastName, string emailAddress)
-        : base(UserId.New())
+    private User(UserId id, string username, string passwordHash, string firstName, string lastName, string emailAddress)
+        : base(id)
     {
         Username = username;
         PasswordHash = passwordHash;
@@ -23,7 +23,7 @@ public sealed class User : Entity<UserId>
     public static User Create(string username, string passwordHash, string firstName, string lastName,
         string emailAddress)
     {
-        var user = new User(username, passwordHash, firstName, lastName, emailAddress);
+        var user = new User(UserId.New(), username, passwordHash, firstName, lastName, emailAddress);
         var validator = new UserValidator();
         var result = validator.Validate(user);
         

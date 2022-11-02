@@ -7,14 +7,15 @@ public sealed class OrderItem : Entity<OrderItemId>
     public ProductId ProductId { get; private set; }
     public int Quantity { get; private set; }
     public double Price { get; private set; }
-    public double Summary => Price * Quantity;
+    public double Summary { get; private set; }
 
-    private OrderItem(ProductId productId, int quantity, double price) 
-        : base(OrderItemId.New())
+    private OrderItem(OrderItemId id, ProductId productId, int quantity, double price) 
+        : base(id)
     {
         ProductId = productId;
         Quantity = quantity;
-        Price = price;
+        Price = price; 
+        RecalculateSummary();
     }
 
     internal static OrderItem Create(ProductId productId, int quantity, double price)
@@ -22,13 +23,14 @@ public sealed class OrderItem : Entity<OrderItemId>
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
         if (price <= 0) throw new ArgumentOutOfRangeException(nameof(price));
 
-        return new OrderItem(productId, quantity, price);
+        return new OrderItem(OrderItemId.New(), productId, quantity, price);
     }
 
     public void OffsetQuantity(int offset)
     {
         if (offset == 0) throw new ArgumentOutOfRangeException(nameof(offset));
         Quantity += offset;
+        RecalculateSummary();
     }
 
     public void OverrideQuantity(int quantity)
@@ -36,5 +38,12 @@ public sealed class OrderItem : Entity<OrderItemId>
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
 
         Quantity = quantity;
+
+        RecalculateSummary();
+    }
+
+    private void RecalculateSummary()
+    {
+        Summary = Price * Quantity;
     }
 }

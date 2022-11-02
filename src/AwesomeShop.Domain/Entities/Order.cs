@@ -9,10 +9,11 @@ public sealed class Order : Entity<OrderId>
     public UserId CustomerId { get; private set; }
     public IReadOnlyList<OrderItem> Items => _items;
     public OrderStatus Status { get; private set; }
-    public double Summary => Items.Sum(x => x.Summary);
+    public double Summary { get; private set; }
+    
 
-    private Order(UserId customerId) 
-        : base(OrderId.New())
+    private Order(OrderId id ,UserId customerId) 
+        : base(id)
     {
         Status = OrderStatus.Cart;
         CustomerId = customerId;
@@ -20,7 +21,7 @@ public sealed class Order : Entity<OrderId>
 
     public static Order Create(UserId customerId)
     {
-        return new Order(customerId);
+        return new Order(OrderId.New(), customerId);
     }
 
     public void AddOrderItem(ProductId productId, int quantity, double price)
@@ -35,6 +36,7 @@ public sealed class Order : Entity<OrderId>
         {
             item.OffsetQuantity(quantity);
         }
+        RecalculateSummary();
     }
 
     public void RemoveOrderItem(OrderItemId orderItemId)
@@ -44,11 +46,18 @@ public sealed class Order : Entity<OrderId>
         {
             _items.Remove(item);
         }
+        RecalculateSummary();
     }
 
     public void ChangeOrderItem(OrderItemId orderItemId, int quantity)
     {
         var item = _items.FirstOrDefault(i => i.Id == orderItemId);
         item?.OverrideQuantity(quantity);
+        RecalculateSummary();
+    }
+
+    private void RecalculateSummary()
+    {
+        Summary = Items.Sum(x => x.Summary);
     }
 }
