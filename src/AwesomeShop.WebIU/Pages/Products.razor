@@ -1,0 +1,93 @@
+﻿@page "/products/{CategoryId}"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
+@inject ApiClient Client
+@inject IdentityService Identity
+@inject ISnackbar Snackbar
+
+@foreach (var prod in _products)
+{
+    <MudPaper Class="pa-3 ma-2" Elevation="2">
+        <div class="d-flex justify-space-between flex-grow-1">
+            <MudText Inline="true" Typo="Typo.h6">@prod.Name</MudText>
+            <MudText Inline="true" Typo="Typo.h6" Color="Color.Info" Class="mr-2">@prod.Price €</MudText>
+        </div>
+        <MudText Typo="Typo.body2">@prod.Description</MudText>
+        <MudDivider Class="my-3" />
+        <MudGrid Justify="Justify.SpaceBetween">
+            <MudItem xs="7" Class="d-flex align-center flex-grow-1">
+                <MudText Class="mx-2" Typo="Typo.body2" Inline="true">Availability:</MudText>
+                @if (prod.Availability == "InStock")
+                {
+                    <MudChip Variant="Variant.Text" Icon="@Icons.Filled.CheckCircleOutline" Color="Color.Success">In stock</MudChip>
+                }
+                else if (prod.Availability == "Low")
+                {
+                    <MudChip Variant="Variant.Text" Icon="@Icons.Filled.WarningAmber" Color="Color.Warning">Low</MudChip>
+                }
+                else
+                {
+                    <MudChip Variant="Variant.Text" Icon="@Icons.Filled.ErrorOutline" Color="Color.Error">Out of stock</MudChip>
+                }
+            </MudItem>
+            <MudItem xs="2">
+                @if (prod.Availability != "OutOfStock")
+                {
+                    <MudNumericField Disabled="@(!Identity.IsSignedIn())" T="int" @bind-Value="_quantities[prod.Id]"
+                             Class="d-inline-block ma-0" Variant="Variant.Outlined" ></MudNumericField>
+                }
+            </MudItem>
+            <MudItem xs="3" Class="d-flex align-center flex-grow-1">
+                @if (prod.Availability != "OutOfStock")
+                {
+                    <MudButton Disabled="@(!Identity.IsSignedIn())" EndIcon="@Icons.Filled.AddShoppingCart" Color="Color.Primary"
+                               Variant="Variant.Filled" OnClick="() => AddToCart(prod.Id)">Add to cart</MudButton>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public string CategoryId { get; set; }
+
+    private readonly List<Product> _products = new();
+    private readonly Dictionary<Guid, int> _quantities = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await Client.GetProductsByCategoryEndpointAsync(Guid.Parse(CategoryId));
+
+        _products.Clear();
+        _quantities.Clear();
+
+        foreach (var prod in response.Products)
+        {
+            var desc = prod.Description;
+            if (desc.Length > 250)
+            {
+                desc = desc[..247] + "...";
+            }
+            _products.Add(new Product
+                {
+                    Availability = prod.Availability,
+                    Description = desc,
+                    Id = prod.Id,
+                    Name = prod.Name,
+                    Price = prod.Price,
+                    ThumbnailFileName = prod.ThumbnailFileName
+                });
+            _quantities.Add(prod.Id, 0);
+        }
+    }
+
+    private async Task AddToCart(Guid productId)
+    {
+        await Client.AddProductToCartEndpointAsync(new AddProductToCartRequest() { ProductId = productId, Quantity = _quantities[productId] });
+        _quantities[productId] = 0;
+        StateHasChanged();
+        Snackbar.Add("Item added to cart", Severity.Success);
+    }
+
+}

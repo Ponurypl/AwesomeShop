@@ -1,0 +1,74 @@
+﻿@page "/login"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
+@layout BlankLayout
+@inject ApiClient ApiClient
+@inject IdentityService Identity
+@inject NavigationManager NavigationManager
+
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudGrid Spacing="6" Class="mt-16" Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
+                <MudGrid Justify="Justify.Center" Class="mt-4">
+                    <MudItem xs="10">
+                        <MudTextField T="string" Label="Username" @bind-Value="_username" />
+                    </MudItem>
+                    <MudItem xs="10">
+                        <MudTextField T="string" Label="Password" InputType="_passwordInput" Adornment="Adornment.End"
+                                      AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility"
+                                      AdornmentAriaLabel="@_passwordButtonLabel" @bind-Value="_password" />
+                    </MudItem>
+                    <MudItem xs="12" Class="d-flex justify-center">
+                        <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large" 
+                                   Class="my-6" OnClick="SignIn" ButtonType="ButtonType.Submit">Login</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+
+    private string _username = default!;
+    private string _password = default!; 
+    
+    private bool _isShow = false;
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private string _passwordButtonLabel = "Show Password";
+
+    private async Task SignIn()
+    {
+        var loginResp = await ApiClient.LoginEndpointAsync(new LoginRequest
+                                                           {
+                                                               Username = _username, Password = _password
+                                                           });
+
+        Identity.SignIn(loginResp.Token, loginResp.ExpireAt);
+        ApiClient.SetToken(Identity.Token);
+
+        var customerResp = await ApiClient.GetCustomerDetailsEndpointAsync();
+        Identity.SetupIdentity(customerResp.FirstName, customerResp.LastName, customerResp.Username, customerResp.EmailAddress);
+
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        @if (_isShow)
+        {
+            _isShow = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
+            _passwordButtonLabel = "Show Password";
+        }
+        else {
+            _isShow = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
+            _passwordButtonLabel = "Hide Password";
+        }
+    }
+}

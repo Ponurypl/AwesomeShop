@@ -1,0 +1,80 @@
+﻿@page "/cart"
+@inject ApiClient ApiClient
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Cart</MudText>
+    <MudGrid Spacing="6" Justify="Justify.Center" Class="mt-16">
+        <MudItem xs="10">
+            <MudPaper Class="d-flex flex-column" Style="height: 100%;" Outlined="true">
+                <MudList Clickable="true">
+                    @foreach (var item in _cart.CartItems)
+                    {
+                        <MudListItem>
+                            <MudGrid>
+                                <MudItem xs="5">
+                                    <MudText>@item.ProductName</MudText>
+                                </MudItem>
+                                <MudItem xs="2">
+                                    <MudText Align="Align.Right">@item.Price €</MudText>
+                                </MudItem>
+                                <MudItem xs="1">
+                                    <MudText>x</MudText>
+                                </MudItem>
+                                <MudItem xs="1">
+                                    <MudText Align="Align.Right">@item.Quantity</MudText>
+                                </MudItem>
+                                <MudItem xs="1">
+                                    <MudText Align="Align.Right">=</MudText>
+                                </MudItem>
+                                <MudItem xs="2">
+                                    <MudText Align="Align.Right"><b>@item.Summary €</b></MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudListItem>
+                    }
+                </MudList>
+                <div class="mt-auto">
+                    <MudDivider />
+                    <div class="d-flex pa-4">
+                        <MudText Typo="Typo.h6">Total:</MudText>
+                        <MudText Typo="Typo.h6" Class="ml-auto"><b>@(_cart?.Summary ?? 0)€</b></MudText>
+                    </div>
+                </div>
+            </MudPaper>
+
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private Models.Cart _cart = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await ApiClient.GetCurrentCartEndpointAsync();
+            _cart.Summary = response.Summary;
+            foreach (var it in response.Items)
+            {
+                _cart.CartItems.Add(new Models.CartItem()
+                    {
+                        ProductId = it.ProductId,
+                        Summary = it.Summary,
+                        Price = it.Price,
+                        ProductName = it.ProductName,
+                        Quantity = it.Quantity,
+                        OrderItemId = it.OrderItemId,
+                        ThumbnailFilename = it.ThumbnailFilename
+
+                    });
+            }
+        }
+        catch
+        {
+            _cart = new Models.Cart();
+        }
+    }
+
+
+}

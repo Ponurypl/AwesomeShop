@@ -1,17 +1,47 @@
-﻿@inherits LayoutComponentBase
+﻿@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
+@inherits LayoutComponentBase
+@inject IdentityService Identity
 
-<div class="page">
-    <div class="sidebar">
+<MudThemeProvider IsDarkMode="true" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudLink Color="Color.Inherit" Underline="Underline.None" Typo="Typo.h5" Class="ml-3" Href="/">Awesome Webshop</MudLink>
+        <MudSpacer />
+        @if (Identity.IsSignedIn())
+        {
+            <MudIconButton Icon="@Icons.Filled.ShoppingCart" Color="Color.Primary" Variant="Variant.Filled" Class="mx-4" Href="/cart"/>
+            <MudButton StartIcon="@Icons.Filled.Logout" Href="/" OnClick="Identity.SignOut" Color="Color.Primary"
+                       Typo="Typo.body1">
+                @Identity.FirstName @Identity.LastName
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Class="mx-2" StartIcon="@Icons.Filled.Login" Color="Color.Primary" Edge="Edge.End" Href="/login">Sign in</MudButton>
+            <MudButton Class="mx-2" Variant="Variant.Filled" Color="Color.Primary" Edge="Edge.End" Href="/register">Sign up</MudButton>
+        }
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
+
