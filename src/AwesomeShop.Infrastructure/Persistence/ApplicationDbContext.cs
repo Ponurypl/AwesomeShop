@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration.Abstractions;
 using System.Reflection;
 using Microsoft.Extensions.Options;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration;
@@ -10,10 +9,10 @@ internal sealed class ApplicationDbContext : DbContext
 {
     private readonly CosmosDbConnectionDetails _connectionDetails;
 
-    public ApplicationDbContext(DbContextOptions options, IOptions<CosmosDbConnectionDetails> connectionDetails) 
+    public ApplicationDbContext(DbContextOptions options, IOptionsMonitor<CosmosDbConnectionDetails> connectionDetails) 
         : base(options)
     {
-        _connectionDetails = connectionDetails.Value;
+        _connectionDetails = connectionDetails.CurrentValue;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

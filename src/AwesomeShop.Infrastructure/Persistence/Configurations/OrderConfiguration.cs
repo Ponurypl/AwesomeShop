@@ -11,7 +11,8 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.ToContainer("orders");
         builder.HasPartitionKey(x => x.Id);
-        builder.Property(x => x.Id).HasConversion<OrderId.EfCoreValueConverter>().IsRequired();
+
+        builder.Property(x => x.Id).ToJsonProperty("id").HasConversion<OrderId.EfCoreValueConverter>().IsRequired();
         builder.Property(x => x.CustomerId).HasConversion<UserId.EfCoreValueConverter>().IsRequired();
         builder.Property(x => x.Status).IsRequired();
         builder.Property(x => x.Summary).IsRequired();

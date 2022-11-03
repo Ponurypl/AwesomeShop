@@ -1,4 +1,5 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Cryptography;
+﻿using System.Security.Cryptography;
+using OnboardingIntegrationExample.AwesomeShop.Application.Common.Cryptography;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Infrastructure.Cryptography;
 
@@ -6,11 +7,12 @@ internal class CryptoService : ICryptoService
 {
     public string Encrypt(string plainText)
     {
-        throw new NotImplementedException();
+        return plainText;
+
     }
 
     public string Decrypt(string passHash)
     {
-        throw new NotImplementedException();
+        return passHash;
     }
 }

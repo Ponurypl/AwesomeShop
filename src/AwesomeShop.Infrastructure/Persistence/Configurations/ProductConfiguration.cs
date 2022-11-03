@@ -11,7 +11,8 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.ToContainer("products");
         builder.HasPartitionKey(x => x.Id);
-        builder.Property(x => x.Id).HasConversion<ProductId.EfCoreValueConverter>().IsRequired();
+
+        builder.Property(x => x.Id).ToJsonProperty("id").HasConversion<ProductId.EfCoreValueConverter>().IsRequired();
         builder.Property(x => x.Description).IsRequired();
         builder.Property(x => x.Name).IsRequired();
         builder.Property(x => x.Price).IsRequired();

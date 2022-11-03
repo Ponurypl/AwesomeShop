@@ -23,7 +23,7 @@ public class UpdateProductsInCartCommandHandler : ICommandHandler<UpdateProducts
             return Result.Failure(Failures.NoOpenCart);
         }
 
-        foreach (var cartItem in request.ItemsToChange)
+        foreach (var cartItem in request.ItemsToUpdate)
         {
             order.ChangeOrderItem(new OrderItemId(cartItem.OrderItemId), cartItem.Quantity);
         }

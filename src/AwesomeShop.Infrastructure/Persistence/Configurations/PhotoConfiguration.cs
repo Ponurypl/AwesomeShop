@@ -11,7 +11,8 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
     {
         builder.ToContainer("photos");
         builder.HasPartitionKey(x => x.Id);
-        builder.Property(x => x.Id).HasConversion<PhotoId.EfCoreValueConverter>().IsRequired();
+
+        builder.Property(x => x.Id).ToJsonProperty("id").HasConversion<PhotoId.EfCoreValueConverter>().IsRequired();
         builder.Property(x => x.IsThumbnailFormat).IsRequired();
         builder.Property(x => x.FileName).IsRequired();
         builder.Property(x => x.ProductId).HasConversion<ProductId.EfCoreValueConverter>()

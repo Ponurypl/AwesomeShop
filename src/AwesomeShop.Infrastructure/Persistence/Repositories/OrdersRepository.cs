@@ -25,4 +25,9 @@ internal sealed class OrdersRepository : IOrdersRepository
     {
         await _orders.AddAsync(order, cancellationToken);
     }
+
+    public void Remove(Order order)
+    {
+        _orders.Remove(order);
+    }
 }

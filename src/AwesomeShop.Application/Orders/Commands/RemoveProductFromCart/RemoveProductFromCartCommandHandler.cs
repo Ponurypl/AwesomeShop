@@ -25,6 +25,11 @@ public class RemoveProductFromCartCommandHandler : ICommandHandler<RemoveProduct
 
         order.RemoveOrderItem(new OrderItemId(request.OrderItemId));
 
+        if (order.Items.Count == 0)
+        {
+            _ordersRepository.Remove(order);
+        }
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

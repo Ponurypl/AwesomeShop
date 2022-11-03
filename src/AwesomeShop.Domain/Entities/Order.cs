@@ -7,7 +7,7 @@ public sealed class Order : Entity<OrderId>
     private readonly List<OrderItem> _items = new();
 
     public UserId CustomerId { get; private set; }
-    public IReadOnlyList<OrderItem> Items => _items;
+    public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
     public OrderStatus Status { get; private set; }
     public double Summary { get; private set; }
     

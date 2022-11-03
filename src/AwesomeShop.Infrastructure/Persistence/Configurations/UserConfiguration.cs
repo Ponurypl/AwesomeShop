@@ -12,7 +12,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToContainer("users");
         builder.HasPartitionKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasConversion<UserId.EfCoreValueConverter>().IsRequired();
+        builder.Property(x => x.Id).ToJsonProperty("id").HasConversion<UserId.EfCoreValueConverter>().IsRequired();
         builder.Property(x => x.Username).IsRequired();
         builder.Property(x => x.PasswordHash).IsRequired();
         builder.Property(x => x.EmailAddress).IsRequired();

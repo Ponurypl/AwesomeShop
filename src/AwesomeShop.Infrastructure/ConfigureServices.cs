@@ -39,7 +39,8 @@ public static class ConfigureServices
 
     public static void ApplyDbMigrations(this IServiceProvider services)
     {
-        services.GetRequiredService<ApplicationDbContext>().ApplyMigrations();
+        using var scope = services.CreateScope();
+        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().ApplyMigrations();
     }
 
     internal static IServiceCollection ConfigureOptionsWithCryptoService<TOptions>(

@@ -10,4 +10,9 @@ public sealed class Result<TValue> : Result
     }
 
     public static implicit operator Result<TValue>(TValue value) => Success(value);
+
+    public TValue Value => IsSuccess
+                               ? _value
+                               : throw new
+                                     InvalidOperationException("The value of a failure result can not be accessed.");
 }

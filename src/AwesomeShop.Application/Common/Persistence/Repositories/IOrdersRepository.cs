@@ -7,4 +7,5 @@ public interface IOrdersRepository
 {
     Task<Order?> GetCartOrderByUserIdAsync(UserId userId, CancellationToken cancellationToken = default);
     Task AddAsync(Order order, CancellationToken cancellationToken = default);
+    void Remove(Order order);
 }

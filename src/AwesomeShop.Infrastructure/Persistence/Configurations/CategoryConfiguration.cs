@@ -12,7 +12,7 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.ToContainer("categories");
         builder.HasPartitionKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasConversion<CategoryId.EfCoreValueConverter>().IsRequired();
+        builder.Property(x => x.Id).ToJsonProperty("id").HasConversion<CategoryId.EfCoreValueConverter>().IsRequired();
         builder.Property(x=> x.CategoryName).IsRequired();
     }
 }
