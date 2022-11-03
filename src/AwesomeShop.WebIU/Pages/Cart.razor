@@ -11,22 +11,22 @@
                     {
                         <MudListItem>
                             <MudGrid>
-                                <MudItem xs="5">
+                                <MudItem xs="5" Class="d-flex align-end flex-grow-1">
                                     <MudText>@item.ProductName</MudText>
                                 </MudItem>
-                                <MudItem xs="2">
+                                <MudItem xs="2" Class="d-flex align-end flex-grow-1">
                                     <MudText Align="Align.Right">@item.Price €</MudText>
                                 </MudItem>
-                                <MudItem xs="1">
+                                <MudItem xs="1" Class="d-flex align-end flex-grow-1">
                                     <MudText>x</MudText>
                                 </MudItem>
-                                <MudItem xs="1">
-                                    <MudText Align="Align.Right">@item.Quantity</MudText>
+                                <MudItem xs="1" Class="d-flex align-center flex-grow-1">
+                                    <MudNumericField T="int" Class="ma-0" @bind-Value="item.Quantity"/>
                                 </MudItem>
-                                <MudItem xs="1">
-                                    <MudText Align="Align.Right">=</MudText>
+                                <MudItem xs="1" Class="d-flex align-end flex-grow-1">
+                                    <MudText Align="Align.Right" Class="mr-2">=</MudText>
                                 </MudItem>
-                                <MudItem xs="2">
+                                <MudItem xs="2" Class="d-flex align-end justify-end flex-grow-1">
                                     <MudText Align="Align.Right"><b>@item.Summary €</b></MudText>
                                 </MudItem>
                             </MudGrid>
