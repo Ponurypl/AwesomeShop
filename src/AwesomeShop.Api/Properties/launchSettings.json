@@ -3,6 +3,7 @@
     "AwesomeShop.Api": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "https://localhost:7024/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
