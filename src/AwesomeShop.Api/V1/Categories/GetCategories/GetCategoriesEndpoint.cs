@@ -16,6 +16,7 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<GetCategoriesRespons
     public override void Configure()
     {
         Get("categories");
+        AllowAnonymous();
         Version(1);
     }
     

@@ -6,6 +6,6 @@ public sealed class GetCustomerMapper : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<User, CustomerDto>().Map(d => d.Id, s => s.Id.Value);
+        config.NewConfig<User, CustomerDto>();
     }
 }

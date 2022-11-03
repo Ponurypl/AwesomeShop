@@ -16,6 +16,11 @@ public sealed class AddProductToCartEndpoint : Endpoint<AddProductToCartRequest>
     {
         Post("cart");
         Version(1);
+        Description(b =>
+                    {
+                        b.Accepts<AddProductToCartRequest>("application/json");
+                        b.Produces(StatusCodes.Status204NoContent);
+                    }, true);
     }
 
     public override async Task HandleAsync(AddProductToCartRequest req, CancellationToken ct)
@@ -30,6 +35,6 @@ public sealed class AddProductToCartEndpoint : Endpoint<AddProductToCartRequest>
             return;
         }
 
-        await SendOkAsync(ct);
+        await SendNoContentAsync(ct);
     }
 }

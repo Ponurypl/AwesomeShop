@@ -1,6 +1,6 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Application.Customers.Queries.GetCustomer;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Customer.GetCustomerDetails;
 
-public sealed record CustomerDto
+public sealed record GetCustomerDetailsResponse
 {
     public string Username { get; set; } = default!;
     public string FirstName { get; set; } = default!;

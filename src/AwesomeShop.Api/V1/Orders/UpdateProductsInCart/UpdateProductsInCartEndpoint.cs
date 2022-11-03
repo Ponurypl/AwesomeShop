@@ -18,6 +18,11 @@ public class UpdateProductsInCartEndpoint : Endpoint<UpdateProductsInCartRequest
     {
         Patch("cart");
         Version(1);
+        Description(b =>
+                    {
+                        b.Accepts<UpdateProductsInCartRequest>("application/json");
+                        b.Produces(StatusCodes.Status204NoContent);
+                    }, true);
     }
 
     public override async Task HandleAsync(UpdateProductsInCartRequest req, CancellationToken ct)
@@ -27,13 +32,12 @@ public class UpdateProductsInCartEndpoint : Endpoint<UpdateProductsInCartRequest
         var itemsToUpdate = _mapper.Map<List<Application.Orders.Commands.UpdateProductsInCart.CartItem>>(req.ItemsToUpdate);
         var response = await _sender.Send(new UpdateProductsInCartCommand(userId, itemsToUpdate), ct);
 
-        if (response.IsSuccess)
-        {
-            await SendOkAsync(ct);
-        }
-        else
+        if (response.IsFailure)
         {
             ThrowError(response.Error!.Message);
+            return;
         }
+
+        await SendNoContentAsync(ct);
     }
 }

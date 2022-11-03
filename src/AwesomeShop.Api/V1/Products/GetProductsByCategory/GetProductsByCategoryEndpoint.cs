@@ -16,6 +16,7 @@ public class GetProductsByCategoryEndpoint : Endpoint<GetProductsByCategoryReque
     public override void Configure()
     {
         Get("products");
+        AllowAnonymous();
         Version(1);
     }
 

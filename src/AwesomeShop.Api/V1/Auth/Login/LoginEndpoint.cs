@@ -1,6 +1,7 @@
 ﻿using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Api.Common.Authentication;
 using OnboardingIntegrationExample.AwesomeShop.Application.Customers.Queries.GetCustomer;
+using OnboardingIntegrationExample.AwesomeShop.Application.Customers.Queries.VerifyCustomer;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Auth.Login;
 
@@ -22,7 +23,7 @@ public class LoginEndpoint : Endpoint<LoginRequest, LoginResponse>
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-        var response = await _sender.Send(new GetCustomerQuery(req.Username, req.Password), ct);
+        var response = await _sender.Send(new VerifyCustomerQuery(req.Username, req.Password), ct);
 
         if (response.IsSuccess)
         {

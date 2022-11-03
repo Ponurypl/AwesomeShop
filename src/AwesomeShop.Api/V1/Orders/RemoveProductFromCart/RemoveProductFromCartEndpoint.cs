@@ -16,6 +16,11 @@ public class RemoveProductFromCartEndpoint : Endpoint<RemoveProductFromCartReque
     {
         Delete("cart/{OrderItemId}");
         Version(1);
+        Description(b =>
+                    {
+                        b.Accepts<RemoveProductFromCartRequest>("application/json");
+                        b.Produces(StatusCodes.Status204NoContent);
+                    }, true);
     }
 
     public override async Task HandleAsync(RemoveProductFromCartRequest req, CancellationToken ct)
@@ -30,6 +35,6 @@ public class RemoveProductFromCartEndpoint : Endpoint<RemoveProductFromCartReque
             return;
         }
 
-        await SendOkAsync(ct);
+        await SendNoContentAsync(ct);
     }
 }

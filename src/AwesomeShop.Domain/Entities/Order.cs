@@ -24,12 +24,12 @@ public sealed class Order : Entity<OrderId>
         return new Order(OrderId.New(), customerId);
     }
 
-    public void AddOrderItem(ProductId productId, int quantity, double price)
+    public void AddOrderItem(ProductId productId, string productName, int quantity, double price)
     {
         var item = _items.FirstOrDefault(i => i.ProductId == productId);
         if (item is null)
         {
-            item = OrderItem.Create(productId, quantity, price);
+            item = OrderItem.Create(productId, productName, quantity, price);
             _items.Add(item);
         }
         else

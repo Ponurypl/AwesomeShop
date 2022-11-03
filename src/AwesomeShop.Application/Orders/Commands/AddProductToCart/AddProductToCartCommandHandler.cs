@@ -47,7 +47,7 @@ public sealed class AddProductToCartCommandHandler : ICommandHandler<AddProductT
             return Result.Failure(Failures.InvalidProduct);
         }
 
-        order.AddOrderItem(product.Id, request.Quantity, product.Price);
+        order.AddOrderItem(product.Id, product.Name, request.Quantity, product.Price);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
