@@ -8,6 +8,7 @@ using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Api.Common.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 var services = builder.Services;
 

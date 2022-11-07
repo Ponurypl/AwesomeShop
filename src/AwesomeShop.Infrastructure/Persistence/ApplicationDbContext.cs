@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Microsoft.Extensions.Options;
-using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Infrastructure.Persistence;
 
 internal sealed class ApplicationDbContext : DbContext
 {
-    private readonly CosmosDbConnectionDetails _connectionDetails;
+    private readonly IConfiguration _configuration;
 
-    public ApplicationDbContext(DbContextOptions options, IOptionsMonitor<CosmosDbConnectionDetails> connectionDetails) 
+    public ApplicationDbContext(DbContextOptions options, IConfiguration configuration) 
         : base(options)
     {
-        _connectionDetails = connectionDetails.CurrentValue;
+        _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseCosmos(_connectionDetails.Address, _connectionDetails.ApiKey, _connectionDetails.DatabaseName);
+        optionsBuilder.UseCosmos(_configuration["APPSETTING_AZURE_COSMOS_CONNECTIONSTRING"], "awesome-shop-db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

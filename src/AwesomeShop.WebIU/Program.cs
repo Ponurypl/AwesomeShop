@@ -14,7 +14,8 @@ var services = builder.Services;
 services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 services.AddScoped(sp =>
                    {
-                       var client = new ApiClient("https://localhost:7024", sp.GetRequiredService<HttpClient>());
+                       var address = sp.GetRequiredService<IConfiguration>()["ApiAddress"];
+                       var client = new ApiClient(address, sp.GetRequiredService<HttpClient>());
                        client.SetToken(sp.GetRequiredService<IdentityService>().Token);
                        return client;
                    });
