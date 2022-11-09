@@ -1,7 +1,7 @@
 ﻿using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.UpdateProductsInCart;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.UpdateProductsInCart;
+namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.UpdateProductsInCart;
 
 public class UpdateProductsInCartEndpoint : Endpoint<UpdateProductsInCartRequest>
 {

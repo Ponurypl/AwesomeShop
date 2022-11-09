@@ -1,4 +1,4 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.UpdateProductsInCart;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.UpdateProductsInCart;
 
 public record UpdateProductsInCartRequest
 {

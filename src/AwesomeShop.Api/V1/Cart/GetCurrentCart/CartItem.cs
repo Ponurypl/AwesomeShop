@@ -1,4 +1,4 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.GetCurrentCart;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.GetCurrentCart;
 
 public sealed record CartItem
 {

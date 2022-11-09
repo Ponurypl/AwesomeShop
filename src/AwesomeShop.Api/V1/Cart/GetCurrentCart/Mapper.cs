@@ -1,6 +1,6 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Queries.GetCurrentCart.Dto;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.GetCurrentCart;
+namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.GetCurrentCart;
 
 public sealed class Mapper : IRegister
 {

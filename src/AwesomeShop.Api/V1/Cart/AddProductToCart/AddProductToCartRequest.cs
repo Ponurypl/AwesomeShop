@@ -1,4 +1,4 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.AddProductToCart;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.AddProductToCart;
 
 public sealed record AddProductToCartRequest
 {

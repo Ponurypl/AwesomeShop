@@ -1,7 +1,7 @@
 ﻿using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.RemoveProductFromCart;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.RemoveProductFromCart;
+namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.RemoveProductFromCart;
 
 public class RemoveProductFromCartEndpoint : Endpoint<RemoveProductFromCartRequest>
 {

@@ -1,7 +1,7 @@
 ﻿using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.AddProductToCart;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.AddProductToCart;
+namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.AddProductToCart;
 
 public sealed class AddProductToCartEndpoint : Endpoint<AddProductToCartRequest>
 {

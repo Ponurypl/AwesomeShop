@@ -2,7 +2,7 @@
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders;
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Queries.GetCurrentCart;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Orders.GetCurrentCart;
+namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Cart.GetCurrentCart;
 
 public sealed class GetCurrentCartEndpoint : EndpointWithoutRequest<CartResponse>
 {
