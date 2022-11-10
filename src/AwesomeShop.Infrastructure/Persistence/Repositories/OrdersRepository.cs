@@ -30,4 +30,21 @@ internal sealed class OrdersRepository : IOrdersRepository
     {
         _orders.Remove(order);
     }
+
+    public async Task<List<Order>> GetOrdersByUserIdAsync(UserId userId, CancellationToken cancellationToken = default)
+    {
+        return await _orders.Where(o => o.CustomerId == userId && o.Status != OrderStatus.Cart)
+                            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Order?> GetOrderByIdAndUserId(OrderId orderId, UserId userId, CancellationToken cancellationToken = default)
+    {
+        return await _orders.FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == userId, cancellationToken);
+    }
+
+    public async Task<int> GetNumberOfOrdersFromMonth(int month, int year, CancellationToken cancellationToken = default)
+    {
+        return await _orders.Where(o => o.CreationDate!.Value.Month == month && o.CreationDate!.Value.Year == year)
+                            .CountAsync(cancellationToken);
+    }
 }

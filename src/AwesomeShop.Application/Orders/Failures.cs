@@ -8,4 +8,6 @@ public static class Failures
 
     public static Error NoOpenCart =>
         new(nameof(NoOpenCart), "Given user doesn't have open cart");
+
+    public static Error OrderNotExists => new(nameof(OrderNotExists), "Order doesn't exists");
 }

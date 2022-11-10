@@ -1,4 +1,5 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Abstractions;
+using OnboardingIntegrationExample.AwesomeShop.Domain.ValueTypes;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
@@ -10,7 +11,11 @@ public sealed class Order : Entity<OrderId>
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
     public OrderStatus Status { get; private set; }
     public double Summary { get; private set; }
-    
+
+    public string? Number { get; private set; }
+    public RecipientDetails? Recipient { get; private set; }
+    public DateTime? CreationDate { get; set; }
+
 
     private Order(OrderId id ,UserId customerId) 
         : base(id)
@@ -56,8 +61,18 @@ public sealed class Order : Entity<OrderId>
         RecalculateSummary();
     }
 
+    public void ProcessCheckout(string number, string firstName, string lastName, string addressLine1, string? addressLine2,
+                                string city, string zipCode, DateTime orderTime)
+    {
+        Number = number;
+        Recipient = RecipientDetails.Create(firstName, lastName, addressLine1, addressLine2, city, zipCode);
+        Status = OrderStatus.Created;
+        CreationDate = orderTime;
+    }
+
     private void RecalculateSummary()
     {
         Summary = Items.Sum(x => x.Summary);
     }
+
 }

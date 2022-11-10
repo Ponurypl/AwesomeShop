@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using OnboardingIntegrationExample.AwesomeShop.Application.Common;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Cryptography;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
@@ -33,6 +33,8 @@ public static class ConfigureServices
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddDbContext<ApplicationDbContext>();
+
+        services.AddScoped<IDateTime, DateTimeProvider.DateTimeProvider>();
 
         return services;
     }
