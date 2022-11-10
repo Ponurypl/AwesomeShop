@@ -22,7 +22,11 @@ public sealed class GetCustomerDetailsEndpoint : EndpointWithoutRequest<GetCusto
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId)) throw new NullReferenceException();
+        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
         var response = await _sender.Send(new GetCustomerQuery(userId), ct);
 

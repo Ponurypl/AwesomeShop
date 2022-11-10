@@ -16,7 +16,7 @@ public class UpdateProductsInCartEndpoint : Endpoint<UpdateProductsInCartRequest
 
     public override void Configure()
     {
-        Patch("cart");
+        Patch("cart/items");
         Version(1);
         Description(b =>
                     {
@@ -27,7 +27,11 @@ public class UpdateProductsInCartEndpoint : Endpoint<UpdateProductsInCartRequest
 
     public override async Task HandleAsync(UpdateProductsInCartRequest req, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId)) throw new NullReferenceException();
+        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
         var itemsToUpdate = _mapper.Map<List<Application.Orders.Commands.UpdateProductsInCart.CartItem>>(req.ItemsToUpdate);
         var response = await _sender.Send(new UpdateProductsInCartCommand(userId, itemsToUpdate), ct);

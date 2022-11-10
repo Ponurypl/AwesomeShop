@@ -14,7 +14,7 @@ public sealed class AddProductToCartEndpoint : Endpoint<AddProductToCartRequest>
 
     public override void Configure()
     {
-        Post("cart");
+        Post("cart/items");
         Version(1);
         Description(b =>
                     {
@@ -25,7 +25,11 @@ public sealed class AddProductToCartEndpoint : Endpoint<AddProductToCartRequest>
 
     public override async Task HandleAsync(AddProductToCartRequest req, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId)) throw new NullReferenceException();
+        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
         var response = await _sender.Send(new AddProductToCartCommand(userId, req.ProductId, req.Quantity), ct);
 

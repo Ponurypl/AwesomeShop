@@ -14,7 +14,7 @@ public class RemoveProductFromCartEndpoint : Endpoint<RemoveProductFromCartReque
 
     public override void Configure()
     {
-        Delete("cart/{OrderItemId}");
+        Delete("cart/items/{OrderItemId}");
         Version(1);
         Description(b =>
                     {
@@ -25,7 +25,11 @@ public class RemoveProductFromCartEndpoint : Endpoint<RemoveProductFromCartReque
 
     public override async Task HandleAsync(RemoveProductFromCartRequest req, CancellationToken ct)
     {
-        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId)) throw new NullReferenceException();
+        if (!Guid.TryParse(User.ClaimValue("UserId"), out var userId))
+        {
+            await SendUnauthorizedAsync(ct);
+            return;
+        }
 
         var resp = await _sender.Send(new RemoveProductFromCartCommand(userId, req.OrderItemId), ct);
 
