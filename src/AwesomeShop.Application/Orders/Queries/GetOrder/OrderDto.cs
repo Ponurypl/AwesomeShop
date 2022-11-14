@@ -7,4 +7,5 @@ public sealed record OrderDto
     public List<OrderItemDto> Items { get; set; } = new();
     public string Status { get; set; } = default!;
     public double Summary { get; set; }
+    public RecipientDetailsDto Recipient { get; set; } = default!;
 }

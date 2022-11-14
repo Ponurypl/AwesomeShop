@@ -1,0 +1,165 @@
+﻿@page "/checkout"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@inject ApiClient ApiClient
+@inject NavigationManager NavigationManager
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Checkout</MudText>
+    <MudGrid Spacing="6" Class="mt-16">
+        <MudItem xs="7">
+            <MudText Typo="Typo.h5" GutterBottom="true">Billing address</MudText>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.FirstName" Label="First name" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.LastName" Label="Last name" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine1" Label="Address line 1" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine2" Label="Address line 2" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.ZipCode" Label="Postal code" 
+                                  Mask="@(new PatternMask("00-000"))" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.City" Label="City" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" @bind-Value="_checkoutForm.Phone" Label="Phone number" 
+                                  Mask="@(new PatternMask("000 000 000"))" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText>Payment method:</MudText>
+                    <MudRadioGroup @bind-SelectedOption="_paymentMethod">
+                        <MudRadio Option="1">Credit Card</MudRadio>
+                    </MudRadioGroup>
+                </MudItem>
+                @if (_paymentMethod == 1)
+                {
+                    <MudItem xs="12">
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudTextField T="string" @bind-Value="_creditCard.CardNumber" Label="Card number" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField T="string" @bind-Value="_creditCard.HolderName" Label="Card holder name" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudDatePicker @bind-Text="_creditCard.ExpirationDate" Label="Expiration date" 
+                                               DisableToolbar="true" OpenTo="OpenTo.Year" FixDay="1" DateFormat="MM/yy" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" @bind-Value="_creditCard.CVV" Label="CVV" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                }
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large" 
+                               Class="mt-8" OnClick="ProceedWithOrder">Proceed with order</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="5">
+            <MudText Typo="Typo.h5" GutterBottom="true">Cart</MudText>
+            <MudPaper Class="d-flex flex-column" Outlined="true">
+                <MudList Clickable="true">
+                    @foreach (var item in _cart.CartItems)
+                    {
+                        <MudListItem>
+                            <div class="d-flex">
+                                <MudText>@item.ProductName (x@(item.Quantity))</MudText>
+                                <MudText Inline="true" Class="ml-auto">@item.Summary.ToString("N2") €</MudText>
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+                <div class="mt-auto">
+                    <MudDivider />
+                    <div class="d-flex pa-4">
+                        <MudText>Total:</MudText>
+                        <MudText Class="ml-auto"><b>@_cart.Summary.ToString("N2")</b></MudText>
+                    </div>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private Models.Cart _cart = new();
+    private int _paymentMethod = 0;
+
+    private readonly CheckoutForm _checkoutForm = new();
+    private readonly CreditCard _creditCard = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await ApiClient.GetCurrentCartEndpointAsync();
+            _cart.Summary = response.Summary;
+            foreach (var it in response.Items)
+            {
+                _cart.CartItems.Add(new Models.CartItem()
+                                    {
+                                        ProductId = it.ProductId,
+                                        Summary = it.Summary,
+                                        Price = it.Price,
+                                        ProductName = it.ProductName,
+                                        Quantity = it.Quantity,
+                                        OrderItemId = it.OrderItemId,
+                                        ThumbnailFilename = it.ThumbnailFilename
+
+                                    });
+            }
+        }
+        catch
+        {
+            _cart = new Models.Cart();
+        }
+    }
+
+    private async void ProceedWithOrder()
+    {
+        var paymentMethod = _paymentMethod switch
+                            {
+                                1 => PaymentMethods.Card,
+                            };
+        
+        CardDetails cardDetails = null;
+        if (paymentMethod == PaymentMethods.Card)
+        {
+            cardDetails = new CardDetails
+                          {
+                              CardNumber = _creditCard.CardNumber, 
+                              Cvv = _creditCard.CVV, 
+                              ExpirationDate = _creditCard.ExpirationDate, 
+                              HolderName = _creditCard.HolderName
+                          };
+        }
+
+        CartCheckoutRequest request = new()
+                                      {
+                                          PaymentMethod = paymentMethod,
+                                          FirstName = _checkoutForm.FirstName,
+                                          LastName = _checkoutForm.LastName,
+                                          AddressLine1 = _checkoutForm.AddressLine1,
+                                          AddressLine2 = _checkoutForm.AddressLine2,
+                                          City = _checkoutForm.City,
+                                          ZipCode = _checkoutForm.ZipCode,
+                                          PhoneNumber = _checkoutForm.Phone,
+                                          CardDetails = cardDetails
+                                      };
+
+        var order = await ApiClient.CartCheckoutEndpointAsync(request);
+        if (order is not null)
+        {
+            NavigationManager.NavigateTo($"/orders/{order.Id}");
+        }
+    }
+}

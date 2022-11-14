@@ -6,4 +6,5 @@ public sealed record Order
     public string Number { get; set; } = default!;
     public string Status { get; set; } = default!;
     public double Summary { get; set; }
+    public DateTime CreationDate { get; set; }
 }

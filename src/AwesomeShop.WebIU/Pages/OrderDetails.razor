@@ -1,0 +1,142 @@
+﻿@page "/orders/{OrderId}"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@inject ApiClient ApiClient
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    @if (_order is not null)
+    {
+        <MudBreadcrumbs Items="_breadcrumbs"/>
+        <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Order details</MudText>
+        <MudGrid Spacing="2" Justify="Justify.Center" Class="mt-4">
+            <MudItem xs="6">
+                <MudPaper Class="d-flex flex-column" Style="height: 100%;" Outlined="true">
+                    <MudGrid Class="pa-3">
+                        <MudItem xs="12">
+                            <MudText Inline="true"><b>Order number:</b></MudText>
+                            <MudText Inline="true">@_order.Number</MudText>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudText Inline="true"><b>Status:</b></MudText>
+                            <MudText Inline="true">@_order.Status</MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="6">
+                <MudPaper Class="d-flex flex-column" Outlined="true">
+                    <MudGrid Class="pa-3">
+                        <MudItem xs="12">
+                            <MudText><b>Recipient:</b></MudText>
+                            <MudText Inline="true">@_order.Recipient.FirstName</MudText>
+                            <MudText Inline="true">@_order.Recipient.LastName</MudText>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudText><b>Address:</b></MudText>
+                            <MudText>@_order.Recipient.AddressLine1</MudText>
+                            <MudText>@_order.Recipient.AddressLine2</MudText>
+                            <MudText Inline="true">@_order.Recipient.ZipCode, </MudText>
+                            <MudText Inline="true">@_order.Recipient.City</MudText>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudText><b>Contact:</b></MudText>
+                            <MudText>@_order.Recipient.PhoneNumber</MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="d-flex flex-column" Outlined="true">
+                    <MudList>
+                        @foreach (var item in _order.Items)
+                        {
+                            <MudListItem>
+                                <MudGrid>
+                                    <MudItem xs="4" Class="d-flex align-center flex-grow-1">
+                                        <MudText>@item.ProductName</MudText>
+                                    </MudItem>
+                                    <MudItem xs="2" Class="d-flex align-center justify-end flex-grow-1">
+                                        <MudText Align="Align.Right">@item.Price €</MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="d-flex align-center flex-grow-1">
+                                        <MudText>x</MudText>
+                                    </MudItem>
+                                    <MudItem xs="2" Class="d-flex align-center flex-grow-1">
+                                        <MudText Align="Align.Right">@item.Quantity</MudText>
+                                    </MudItem>
+                                    <MudItem xs="1" Class="d-flex align-center flex-grow-1">
+                                        <MudText Align="Align.Right" Class="mr-2">=</MudText>
+                                    </MudItem>
+                                    <MudItem xs="2" Class="d-flex align-center justify-end flex-grow-1">
+                                        <MudText Align="Align.Right">
+                                            <b>@item.Summary.ToString("N2") €</b>
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudListItem>
+                        }
+                    </MudList>
+                    <div class="mt-auto">
+                        <MudDivider/>
+                        <div class="d-flex pa-4">
+                            <MudText Typo="Typo.h6">Total:</MudText>
+                            <MudText Typo="Typo.h6" Class="ml-auto">
+                                <b>@_order.Summary.ToString("N2") €</b>
+                            </MudText>
+                        </div>
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+
+    [Parameter]
+    public string OrderId { get; set; } = null!;
+
+    private Models.OrderDetails? _order;
+
+    private readonly List<BreadcrumbItem> _breadcrumbs = new()
+                                                         {
+                                                             new BreadcrumbItem("Home", href: "/"),
+                                                             new BreadcrumbItem("Orders", href: "/orders")
+                                                         };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var order = await ApiClient.GetOrderByIdEndpointAsync(Guid.Parse(OrderId));
+        if (order is not null)
+        {
+            _breadcrumbs.Add(new BreadcrumbItem($"Order {order.Number}", href: null, disabled: true));
+
+            _order = new Models.OrderDetails
+                     {
+                         Id = order.Id,
+                         Number = order.Number,
+                         Summary = order.Summary,
+                         Status = order.Status,
+                         Items = order.Items.Select(i => new OrderDetailsItem()
+                                                         {
+                                                             Id = i.Id,
+                                                             ProductName = i.ProductName,
+                                                             Quantity = i.Quantity,
+                                                             Summary = i.Summary, 
+                                                             Price = i.Price, 
+                                                             ProductId = i.ProductId
+                                                         }).ToList(),
+                         Recipient = new Models.RecipientDetails()
+                                     {
+                                         LastName = order.Recipient.LastName,
+                                         AddressLine1 = order.Recipient.AddressLine1,
+                                         AddressLine2 = order.Recipient.AddressLine2,
+                                         City = order.Recipient.City,
+                                         ZipCode = order.Recipient.ZipCode, 
+                                         FirstName = order.Recipient.FirstName, 
+                                         PhoneNumber = order.Recipient.PhoneNumber
+                                     }
+                     };
+        }
+    }
+
+}

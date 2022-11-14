@@ -43,7 +43,7 @@ public sealed class CartCheckoutEndpoint : Endpoint<CartCheckoutRequest, Order>
         }
 
         var command = new CartCheckoutCommand(userId, req.FirstName, req.LastName, req.AddressLine1,
-                                              req.AddressLine2, req.City, req.ZipCode, paymentMethod, cardDetails);
+                                              req.AddressLine2, req.City, req.ZipCode, req.PhoneNumber, paymentMethod, cardDetails);
 
         var resp = await _sender.Send(command, ct);
         if (resp.IsFailure)

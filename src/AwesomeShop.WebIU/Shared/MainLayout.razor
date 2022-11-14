@@ -15,10 +15,11 @@
         @if (Identity.IsSignedIn())
         {
             <MudIconButton Icon="@Icons.Filled.ShoppingCart" Color="Color.Primary" Variant="Variant.Filled" Class="mx-4" Href="/cart"/>
-            <MudButton StartIcon="@Icons.Filled.Logout" Href="/" OnClick="Identity.SignOut" Color="Color.Primary"
-                       Typo="Typo.body1">
-                @Identity.FirstName @Identity.LastName
-            </MudButton>
+            <MudMenu Label="@($"{Identity.FirstName} {Identity.LastName}")" Color="Color.Primary"
+                 EndIcon="@Icons.Filled.KeyboardArrowDown">
+                <MudMenuItem Icon="@Icons.Filled.ViewList" Href="/orders">Orders</MudMenuItem>
+                <MudMenuItem OnClick="Identity.SignOut" Href="/" Icon="@Icons.Filled.Logout">Logout</MudMenuItem>
+            </MudMenu>
         }
         else
         {

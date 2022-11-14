@@ -20,17 +20,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Checkout.razor" />
     <_ContentIncludedByDefault Remove="Pages\Login.razor" />
+    <_ContentIncludedByDefault Remove="Pages\OrderDetails.razor" />
     <_ContentIncludedByDefault Remove="Pages\Products.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Checkout.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\OrderDetails.razor" />
   </ItemGroup>
 
 </Project>

@@ -8,5 +8,6 @@ public sealed class Mapper : IRegister
     {
         config.NewConfig<OrderDto, Order>();
         config.NewConfig<OrderItemDto, OrderItem>();
+        config.NewConfig<RecipientDetailsDto, RecipientDetails>();
     }
 }

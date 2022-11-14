@@ -44,7 +44,11 @@ internal sealed class OrdersRepository : IOrdersRepository
 
     public async Task<int> GetNumberOfOrdersFromMonth(int month, int year, CancellationToken cancellationToken = default)
     {
-        return await _orders.Where(o => o.CreationDate!.Value.Month == month && o.CreationDate!.Value.Year == year)
+        DateTime begin = new(year, month, 1);
+        DateTime end = begin.AddMonths(1);
+        return await _orders.Where(o => o.Status != OrderStatus.Cart && 
+                                        o.CreationDate >= begin &&
+                                        o.CreationDate < end)
                             .CountAsync(cancellationToken);
     }
 }

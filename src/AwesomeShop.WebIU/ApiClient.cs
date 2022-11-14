@@ -1119,6 +1119,9 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
         [Newtonsoft.Json.JsonProperty("summary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Summary { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset CreationDate { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v12.0.0.0))")]
@@ -1138,6 +1141,9 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
 
         [Newtonsoft.Json.JsonProperty("summary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Summary { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("recipient", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public RecipientDetails Recipient { get; set; }
 
     }
 
@@ -1161,6 +1167,32 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
 
         [Newtonsoft.Json.JsonProperty("summary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Summary { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v12.0.0.0))")]
+    public partial class RecipientDetails
+    {
+        [Newtonsoft.Json.JsonProperty("firstName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FirstName { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LastName { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("addressLine1", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AddressLine1 { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AddressLine2 { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("city", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string City { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("zipCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ZipCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("phoneNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PhoneNumber { get; set; }
 
     }
 
@@ -1305,6 +1337,9 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
 
         [Newtonsoft.Json.JsonProperty("zipCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ZipCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("phoneNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PhoneNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public PaymentMethods PaymentMethod { get; set; }

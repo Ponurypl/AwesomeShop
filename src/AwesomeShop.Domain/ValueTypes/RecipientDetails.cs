@@ -8,9 +8,10 @@ public sealed record RecipientDetails
     public string? AddressLine2 { get; private set; }
     public string City { get; private set; } = default!;
     public string ZipCode { get; private set; } = default!;
+    public string PhoneNumber { get; private set; } = default!;
 
     private RecipientDetails(string firstName, string lastName, string addressLine1, string? addressLine2, string city,
-                             string zipCode)
+                             string zipCode, string phoneNumber)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -18,11 +19,12 @@ public sealed record RecipientDetails
         AddressLine2 = addressLine2;
         City = city;
         ZipCode = zipCode;
+        PhoneNumber = phoneNumber;
     }
 
     public static RecipientDetails Create(string firstName, string lastName, string addressLine1, string? addressLine2,
-                                          string city, string zipCode)
+                                          string city, string zipCode, string phoneNumber)
     {
-        return new RecipientDetails(firstName, lastName, addressLine1, addressLine2, city, zipCode);
+        return new RecipientDetails(firstName, lastName, addressLine1, addressLine2, city, zipCode, phoneNumber);
     }
 }

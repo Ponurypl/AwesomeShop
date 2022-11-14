@@ -36,7 +36,7 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
         var orderNumber = await _orderNumberGenService.GenerateOrderNumberAsync(cancellationToken);
 
         cart.ProcessCheckout(orderNumber, request.FirstName, request.LastName, request.AddressLine1, request.AddressLine2,
-                             request.City, request.ZipCode, _dateTime.UtcNow);
+                             request.City, request.ZipCode, request.PhoneNumber, _dateTime.UtcNow);
         
         if (request.PaymentMethod == PaymentMethods.Card)
         {

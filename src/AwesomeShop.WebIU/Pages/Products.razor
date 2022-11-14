@@ -50,7 +50,7 @@
 
 @code {
     [Parameter]
-    public string CategoryId { get; set; }
+    public string CategoryId { get; set; } = null!;
 
     private readonly List<Product> _products = new();
     private readonly Dictionary<Guid, int> _quantities = new();

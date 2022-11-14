@@ -62,10 +62,11 @@ public sealed class Order : Entity<OrderId>
     }
 
     public void ProcessCheckout(string number, string firstName, string lastName, string addressLine1, string? addressLine2,
-                                string city, string zipCode, DateTime orderTime)
+                                string city, string zipCode, string phoneNumber, DateTime orderTime)
     {
         Number = number;
-        Recipient = RecipientDetails.Create(firstName, lastName, addressLine1, addressLine2, city, zipCode);
+        Recipient = RecipientDetails.Create(firstName, lastName, addressLine1, addressLine2, city, zipCode,
+                                            phoneNumber);
         Status = OrderStatus.Created;
         CreationDate = orderTime;
     }

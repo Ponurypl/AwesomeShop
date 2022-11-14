@@ -1,0 +1,50 @@
+﻿@page "/orders"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@inject ApiClient ApiClient
+@inject NavigationManager NavigationManager
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudTable Items="_orders" Loading="_loading" Hover="true" Dense="true" Bordered="true" OnRowClick="RowClick" T="OrderHeader">
+        <HeaderContent>
+            <MudTh>Number</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Creation date</MudTh>
+            <MudTh>Summary</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Number">@context.Number</MudTd>
+            <MudTd DataLabel="Status">@context.Status</MudTd>
+            <MudTd DataLabel="Creation date">@context.CreationDate.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
+            <MudTd DataLabel="Summary">@context.Summary.ToString("N2") €</MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private readonly List<OrderHeader> _orders = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var orders = await ApiClient.GetOrdersEndpointAsync();
+        foreach (var order in orders)
+        {
+            _orders.Add(new OrderHeader()
+                        {
+                            Id = order.Id, 
+                            Number = order.Number,
+                            Status = order.Status,
+                            Summary = order.Summary,
+                            CreationDate = order.CreationDate
+                        });
+        }
+
+        _loading = false;
+    }
+
+    private void RowClick(TableRowClickEventArgs<OrderHeader> eventArgs)
+    {
+        NavigationManager.NavigateTo($"/orders/{eventArgs.Item.Id}");
+    }
+
+}

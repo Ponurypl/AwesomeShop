@@ -35,6 +35,6 @@ public sealed class GetOrderByIdEndpoint : Endpoint<GetOrderByIdRequest, Order>
             return;
         }
 
-        await SendOkAsync(_mapper.Map<Order>(order), ct);
+        await SendOkAsync(_mapper.Map<Order>(order.Value), ct);
     }
 }
