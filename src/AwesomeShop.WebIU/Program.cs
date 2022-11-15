@@ -19,10 +19,13 @@ services.AddScoped(sp =>
                        client.SetToken(sp.GetRequiredService<IdentityService>().Token);
                        return client;
                    });
+
 services.AddMudServices(config =>
                         {
                             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
                         });
+services.AddMudMarkdownServices();
+
 services.AddSingleton<IdentityService>();
 
 await builder.Build().RunAsync();

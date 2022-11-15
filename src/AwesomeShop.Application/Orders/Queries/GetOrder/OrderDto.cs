@@ -8,4 +8,5 @@ public sealed record OrderDto
     public string Status { get; set; } = default!;
     public double Summary { get; set; }
     public RecipientDetailsDto Recipient { get; set; } = default!;
+    public string PaymentId { get; set; }
 }

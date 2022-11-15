@@ -14,7 +14,8 @@ public sealed class Order : Entity<OrderId>
 
     public string? Number { get; private set; }
     public RecipientDetails? Recipient { get; private set; }
-    public DateTime? CreationDate { get; set; }
+    public DateTime? CreationDate { get; private set; }
+    public string? PaymentId { get; private set; }
 
 
     private Order(OrderId id ,UserId customerId) 
@@ -76,4 +77,18 @@ public sealed class Order : Entity<OrderId>
         Summary = Items.Sum(x => x.Summary);
     }
 
+    public void AddPaymentId(string paymentId)
+    {
+        PaymentId = paymentId;
+    }
+
+    public void SetWaitingForPaymentStatus()
+    {
+        Status = OrderStatus.WaitingForPayment;
+    }
+
+    public void SetPaidStatus()
+    {
+        Status = OrderStatus.Paid;
+    }
 }

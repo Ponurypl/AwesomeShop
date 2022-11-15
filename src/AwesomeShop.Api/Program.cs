@@ -8,13 +8,13 @@ using FastEndpoints.Security;
 using OnboardingIntegrationExample.AwesomeShop.Api.Common.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddEnvironmentVariables();
+builder.Configuration.AddEnvironmentVariables("APPSETTING_");
 
 var services = builder.Services;
 
 services.AddApplicationLayer();
 services.AddInfrastructureLayer(builder.Configuration);
-services.AddApiLayerServices();
+services.AddApiLayerServices(builder.Configuration);
 
 services.AddFastEndpoints();
 services.AddAuthenticationJWTBearer(AuthDefaults.JwtSigningKey);

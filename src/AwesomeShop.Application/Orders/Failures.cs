@@ -1,4 +1,6 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders;
+﻿using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.CartCheckout;
+
+namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders;
 
 public static class Failures
 {
@@ -10,4 +12,5 @@ public static class Failures
         new(nameof(NoOpenCart), "Given user doesn't have open cart");
 
     public static Error OrderNotExists => new(nameof(OrderNotExists), "Order doesn't exists");
+    public static Error PaymentException => new(nameof(PaymentException), "There was problem with payment");
 }

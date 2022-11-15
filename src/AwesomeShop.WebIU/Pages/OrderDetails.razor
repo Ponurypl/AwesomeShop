@@ -1,5 +1,7 @@
 ﻿@page "/orders/{OrderId}"
 @using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@using Newtonsoft.Json.Linq
+@using Newtonsoft.Json
 @inject ApiClient ApiClient
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
@@ -86,6 +88,41 @@
                     </div>
                 </MudPaper>
             </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="d-flex flex-column" Outlined="true">
+                    <MudTable Items="_events" Loading="eventsLoading" Hover="true" Dense="true" Bordered="true">
+                        <HeaderContent>
+                            <MudTh>Received at</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Status code</MudTh>
+                            <MudTh><MudIconButton Icon="@Icons.Filled.Refresh" Size="Size.Small" OnClick="FetchData"/></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Received at">@context.ReceivedAt.ToString("O")</MudTd>
+                            <MudTd DataLabel="Status">@context.Status</MudTd>
+                            <MudTd DataLabel="Status code">@context.StatusCode</MudTd>
+                            <MudTd>
+                                <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                                           OnClick="@(() => TogglePayload(context.Id))">
+                                    @(context.ShowDetails ? "Hide" : "Show") Payload
+                                </MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <ChildRowContent>
+                            @if (@context.ShowDetails)
+                            {
+                                <MudTr>
+                                    <td colspan="4">
+                                        <div style="height: 400px; overflow-y: scroll">
+                                            <MudMarkdown Value="@context.Payload" CodeBlockTheme="CodeBlockTheme.StackoverflowDark" />
+                                        </div>
+                                    </td>
+                                </MudTr>
+                            }
+                        </ChildRowContent>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
         </MudGrid>
     }
 </MudContainer>
@@ -96,6 +133,8 @@
     public string OrderId { get; set; } = null!;
 
     private Models.OrderDetails? _order;
+    private List<Models.WebhookEvent> _events = new();
+    private bool eventsLoading = true;
 
     private readonly List<BreadcrumbItem> _breadcrumbs = new()
                                                          {
@@ -116,6 +155,7 @@
                          Number = order.Number,
                          Summary = order.Summary,
                          Status = order.Status,
+                         PaymentId = order.PaymentId,
                          Items = order.Items.Select(i => new OrderDetailsItem()
                                                          {
                                                              Id = i.Id,
@@ -136,7 +176,59 @@
                                          PhoneNumber = order.Recipient.PhoneNumber
                                      }
                      };
+
+            if (order.PaymentId is not null) 
+            {
+                var events = await ApiClient.GetWebhookEventsEndpointAsync(order.PaymentId);
+                foreach (var we in events)
+                {
+                    var payload = $"```json\n{JValue.Parse(we.Payload).ToString(Formatting.Indented)}\n```";
+                    _events.Add(new Models.WebhookEvent()
+                                {
+                                    Id = we.Id,
+                                    Status = we.Status, 
+                                    StatusCode = we.StatusCode, 
+                                    PaymentId = we.PaymentId, 
+                                    ReceivedAt = we.ReceivedAt,
+                                    Payload = payload
+                                });
+                }
+            }
+
+            eventsLoading = false;
         }
+    }
+
+    private async void FetchData()
+    {
+        if (_order.PaymentId is not null) 
+        {
+            var events = await ApiClient.GetWebhookEventsEndpointAsync(_order.PaymentId);
+            foreach (var we in events)
+            {
+                if (_events.Exists(e => e.Id == we.Id))
+                {
+                    continue;
+                }
+
+                var payload = $"```json\n{JValue.Parse(we.Payload).ToString(Formatting.Indented)}\n```";
+                _events.Add(new Models.WebhookEvent()
+                            {
+                                Id = we.Id,
+                                Status = we.Status, 
+                                StatusCode = we.StatusCode, 
+                                PaymentId = we.PaymentId, 
+                                ReceivedAt = we.ReceivedAt,
+                                Payload = payload
+                            });
+            }
+        }
+    }
+
+    private void TogglePayload(Guid id)
+    {
+        var we = _events.Find(e => e.Id == id);
+        we.ShowDetails = !we.ShowDetails;
     }
 
 }

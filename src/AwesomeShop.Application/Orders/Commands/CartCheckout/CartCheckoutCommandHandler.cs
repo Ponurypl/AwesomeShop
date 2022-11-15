@@ -1,7 +1,9 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common;
+﻿using Microsoft.Extensions.Logging;
+using OnboardingIntegrationExample.AwesomeShop.Application.Common;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Application.Orders.Abstractions;
+using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Services;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Primitives;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.CartCheckout;
@@ -13,20 +15,26 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
     private readonly IOrderNumberGenService _orderNumberGenService;
     private readonly IDateTime _dateTime;
     private readonly IMapper _mapper;
+    private readonly IPaymentApiService _paymentApiService;
+    private readonly ILogger<CartCheckoutCommandHandler> _logger;
 
     public CartCheckoutCommandHandler(IOrdersRepository ordersRepository, IUnitOfWork unitOfWork,
-                                      IOrderNumberGenService orderNumberGenService, IDateTime dateTime, IMapper mapper)
+                                      IOrderNumberGenService orderNumberGenService, IDateTime dateTime, IMapper mapper,
+                                      IPaymentApiService paymentApiService, ILogger<CartCheckoutCommandHandler> logger)
     {
         _ordersRepository = ordersRepository;
         _unitOfWork = unitOfWork;
         _orderNumberGenService = orderNumberGenService;
         _dateTime = dateTime;
         _mapper = mapper;
+        _paymentApiService = paymentApiService;
+        _logger = logger;
     }
 
     public async Task<Result<OrderDto>> Handle(CartCheckoutCommand request, CancellationToken cancellationToken)
     {
-        var cart = await _ordersRepository.GetCartOrderByUserIdAsync(new UserId(request.UserId), cancellationToken);
+        var customerId = new UserId(request.UserId);
+        var cart = await _ordersRepository.GetCartOrderByUserIdAsync(customerId, cancellationToken);
 
         if (cart is null)
         {
@@ -40,7 +48,22 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
         
         if (request.PaymentMethod == PaymentMethods.Card)
         {
-            //TODO: call Worldline api   
+            try
+            {
+                var paymentStatus = await _paymentApiService.PayByCard(customerId, cart.Summary, request.CardDetails!);
+            
+                cart.SetWaitingForPaymentStatus();
+                cart.AddPaymentId(paymentStatus.PaymentId);
+
+                if (paymentStatus.StatusCode == 9)
+                {
+                    cart.SetPaidStatus();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+            }
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

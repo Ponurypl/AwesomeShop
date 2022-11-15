@@ -6,9 +6,12 @@ using OnboardingIntegrationExample.AwesomeShop.Application.Common;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Cryptography;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
+using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Services;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration.Abstractions;
+using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Configuration.WorldLine;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Cryptography;
+using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Payment;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Infrastructure.Persistence.Repositories;
 
@@ -20,7 +23,8 @@ public static class ConfigureServices
     {
         services.AddTransient<ICryptoService, CryptoService>();
         services.AddOptions();
-        services.Configure<CosmosDbConnectionDetails>(configuration.GetSection("CosmosDB"));
+        //services.Configure<CosmosDbConnectionDetails>(configuration.GetSection("CosmosDB"));
+        services.Configure<WorldLineApiConfigurationDetails>(configuration.GetSection("Worldline:Api"));
         //services.ConfigureOptionsWithCryptoService<DatabaseConnectionDetails>(configuration.GetSection("PgDb"));
         //services.AddSingleton<IDbConnectionStringProvider, PostgreDbConnectionStringProvider>();
 
@@ -29,12 +33,14 @@ public static class ConfigureServices
         services.AddScoped<IPhotosRepository, PhotosRepository>();
         services.AddScoped<IProductsRepository, ProductsRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IWebhookEventsRepository, WebhookEventRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddDbContext<ApplicationDbContext>();
 
         services.AddScoped<IDateTime, DateTimeProvider.DateTimeProvider>();
+        services.AddScoped<IPaymentApiService, WorldLineApiService>();
 
         return services;
     }

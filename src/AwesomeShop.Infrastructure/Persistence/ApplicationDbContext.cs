@@ -16,7 +16,7 @@ internal sealed class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseCosmos(_configuration["APPSETTING_AZURE_COSMOS_CONNECTIONSTRING"], "awesome-shop-db");
+        optionsBuilder.UseCosmos(_configuration["AZURE_COSMOS_CONNECTIONSTRING"], "awesome-shop-db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
