@@ -1,4 +1,4 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries;
+﻿using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries.GetWebhookEvents;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Payments.GetWebhookEvents;
 

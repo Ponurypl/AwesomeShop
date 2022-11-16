@@ -6,5 +6,7 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Services
 
 public interface IPaymentApiService
 {
-    Task<PaymentDetails> PayByCard(UserId customerId, double paymentAmount, CardDetails cardDetails);
+    Task<PaymentDetails> PayByCardAsync(UserId customerId, double paymentAmount, CardDetails cardDetails);
+    Task<PaymentDetails> SetupDelayedCardPaymentAsync(UserId customerId, double paymentAmount, CardDetails cardDetails);
+    Task<PaymentDetails> CaptureDelayedCardPaymentAsync(string paymentId, double paymentAmount);
 }

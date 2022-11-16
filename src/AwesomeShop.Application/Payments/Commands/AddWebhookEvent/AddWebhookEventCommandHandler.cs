@@ -1,18 +1,23 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence;
 using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
+using OnboardingIntegrationExample.AwesomeShop.Domain.Enums;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Commands;
+namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Commands.AddWebhookEvent;
 
 public sealed class AddWebhookEventCommandHandler : ICommandHandler<AddWebhookEventCommand>
 {
     private readonly IWebhookEventsRepository _webhookEventsRepository;
+    private readonly IOrdersRepository _ordersRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AddWebhookEventCommandHandler(IWebhookEventsRepository webhookEventsRepository, IUnitOfWork unitOfWork)
+    public AddWebhookEventCommandHandler(IWebhookEventsRepository webhookEventsRepository,
+                                         IOrdersRepository ordersRepository,
+                                         IUnitOfWork unitOfWork)
     {
         _webhookEventsRepository = webhookEventsRepository;
         _unitOfWork = unitOfWork;
+        _ordersRepository = ordersRepository;
     }
 
     public async Task<Result> Handle(AddWebhookEventCommand request, CancellationToken cancellationToken)
@@ -21,8 +26,20 @@ public sealed class AddWebhookEventCommandHandler : ICommandHandler<AddWebhookEv
                                                request.ReceivedAt, request.Payload);
 
         if (createResult.IsFailure)
-        { 
+        {
             return Result.Failure(createResult.Error!);
+        }
+
+        if (request.StatusCode == 9)
+        {
+            var order = await _ordersRepository.GetOrderByPaymentIdAsync(request.PaymentId, cancellationToken);
+            if (order is not null)
+            {
+                if (order.Status == OrderStatus.WaitingForPayment)
+                {
+                    order.SetPaidStatus();
+                }
+            }
         }
 
         await _webhookEventsRepository.AddAsync(createResult.Value, cancellationToken);

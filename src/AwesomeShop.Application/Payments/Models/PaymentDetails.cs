@@ -3,5 +3,6 @@
 public sealed record PaymentDetails
 {
     public string PaymentId { get; init; } = null!;
+    public string RawPaymentId { get; init; } = null!;
     public int StatusCode { get; init; }
 }

@@ -1,4 +1,4 @@
-﻿using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Commands;
+﻿using OnboardingIntegrationExample.AwesomeShop.Application.Payments.Commands.AddWebhookEvent;
 using OnlinePayments.Sdk;
 using OnlinePayments.Sdk.Webhooks;
 

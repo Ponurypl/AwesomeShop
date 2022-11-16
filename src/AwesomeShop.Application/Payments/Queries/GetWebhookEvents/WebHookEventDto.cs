@@ -1,6 +1,6 @@
-﻿namespace OnboardingIntegrationExample.AwesomeShop.Api.V1.Payments.GetWebhookEvents;
+﻿namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries.GetWebhookEvents;
 
-public sealed record WebhookEvent
+public sealed record WebHookEventDto
 {
     public Guid Id { get; init; }
     public string PaymentId { get; init; } = default!;

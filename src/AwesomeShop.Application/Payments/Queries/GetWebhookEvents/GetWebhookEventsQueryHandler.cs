@@ -1,6 +1,6 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Application.Common.Persistence.Repositories;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries;
+namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries.GetWebhookEvents;
 
 public sealed class GetWebhookEventsQueryHandler : IQueryHandler<GetWebhookEventsQuery, List<WebHookEventDto>>
 {

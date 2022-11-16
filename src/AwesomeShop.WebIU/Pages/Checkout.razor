@@ -35,10 +35,11 @@
                 <MudItem xs="12">
                     <MudText>Payment method:</MudText>
                     <MudRadioGroup @bind-SelectedOption="_paymentMethod">
-                        <MudRadio Option="1">Credit Card</MudRadio>
+                        <MudRadio Option="1">Credit Card (SALE)</MudRadio>
+                        <MudRadio Option="2">Credit Card (AUTHORIZATION)</MudRadio>
                     </MudRadioGroup>
                 </MudItem>
-                @if (_paymentMethod == 1)
+                @if (_paymentMethod is 1 or 2)
                 {
                     <MudItem xs="12">
                         <MudGrid>
@@ -129,11 +130,13 @@
     {
         var paymentMethod = _paymentMethod switch
                             {
-                                1 => PaymentMethods.Card,
+                                1 => PaymentMethods.CardSale,
+                                2 => PaymentMethods.CardAuthorization,
+                                _ => throw new ArgumentOutOfRangeException()
                             };
         
         CardDetails? cardDetails = null;
-        if (paymentMethod == PaymentMethods.Card)
+        if (paymentMethod is PaymentMethods.CardSale or PaymentMethods.CardAuthorization)
         {
             cardDetails = new CardDetails
                           {

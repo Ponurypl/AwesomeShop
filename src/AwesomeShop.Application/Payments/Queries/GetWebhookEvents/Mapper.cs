@@ -1,6 +1,6 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
-namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries;
+namespace OnboardingIntegrationExample.AwesomeShop.Application.Payments.Queries.GetWebhookEvents;
 
 public sealed class Mapper : IRegister
 {

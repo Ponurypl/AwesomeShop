@@ -51,4 +51,9 @@ internal sealed class OrdersRepository : IOrdersRepository
                                         o.CreationDate < end)
                             .CountAsync(cancellationToken);
     }
+
+    public async Task<Order?> GetOrderByPaymentIdAsync(string paymentId, CancellationToken cancellationToken = default)
+    {
+        return await _orders.FirstOrDefaultAsync(o => o.PaymentId == paymentId, cancellationToken);
+    }
 }

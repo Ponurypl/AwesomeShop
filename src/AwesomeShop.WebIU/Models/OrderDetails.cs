@@ -8,5 +8,5 @@ public sealed class OrderDetails
     public string Status { get; set; } = default!;
     public double Summary { get; set; }
     public RecipientDetails Recipient { get; set; } = default!;
-    public string PaymentId { get; set; }
+    public string PaymentId { get; set; } = default!;
 }

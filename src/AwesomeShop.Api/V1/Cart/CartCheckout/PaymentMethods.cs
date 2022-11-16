@@ -2,5 +2,5 @@
 
 public enum PaymentMethods
 {
-    Card
+    CardSale, CardAuthorization
 }

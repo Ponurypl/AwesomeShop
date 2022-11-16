@@ -2,5 +2,5 @@
 
 public sealed record GetWebhookEventsRequest
 {
-    public string PaymentId { get; set; }
+    public string PaymentId { get; set; } = default!;
 }

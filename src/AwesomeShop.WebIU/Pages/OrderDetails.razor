@@ -201,7 +201,7 @@
 
     private async void FetchData()
     {
-        if (_order.PaymentId is not null) 
+        if (_order?.PaymentId is not null) 
         {
             var events = await ApiClient.GetWebhookEventsEndpointAsync(_order.PaymentId);
             foreach (var we in events)
@@ -227,7 +227,7 @@
 
     private void TogglePayload(Guid id)
     {
-        var we = _events.Find(e => e.Id == id);
+        var we = _events.First(e => e.Id == id);
         we.ShowDetails = !we.ShowDetails;
     }
 

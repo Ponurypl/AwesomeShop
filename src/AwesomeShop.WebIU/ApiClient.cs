@@ -1552,7 +1552,9 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
     public enum PaymentMethods
     {
 
-        Card = 0,
+        CardSale = 0,
+
+        CardAuthorization = 1,
 
     }
 

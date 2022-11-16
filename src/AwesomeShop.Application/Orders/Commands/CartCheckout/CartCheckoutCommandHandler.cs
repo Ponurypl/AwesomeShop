@@ -46,24 +46,47 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
         cart.ProcessCheckout(orderNumber, request.FirstName, request.LastName, request.AddressLine1, request.AddressLine2,
                              request.City, request.ZipCode, request.PhoneNumber, _dateTime.UtcNow);
         
-        if (request.PaymentMethod == PaymentMethods.Card)
+        switch (request.PaymentMethod)
         {
-            try
-            {
-                var paymentStatus = await _paymentApiService.PayByCard(customerId, cart.Summary, request.CardDetails!);
-            
-                cart.SetWaitingForPaymentStatus();
-                cart.AddPaymentId(paymentStatus.PaymentId);
-
-                if (paymentStatus.StatusCode == 9)
+            case PaymentMethods.CardSale:
+                try
                 {
-                    cart.SetPaidStatus();
+                    var paymentStatus = await _paymentApiService.PayByCardAsync(customerId, cart.Summary, request.CardDetails!);
+            
+                    cart.SetWaitingForPaymentStatus();
+                    cart.AddPaymentId(paymentStatus.PaymentId);
+
+                    if (paymentStatus.StatusCode == 9)
+                    {
+                        cart.SetPaidStatus();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
-            }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+
+                break;
+            case PaymentMethods.CardAuthorization:
+                try
+                {
+                    var paymentStatus =
+                        await _paymentApiService.SetupDelayedCardPaymentAsync(customerId, cart.Summary,
+                                                                         request.CardDetails!);
+
+                    cart.SetWaitingForPaymentStatus();
+                    cart.AddPaymentId(paymentStatus.PaymentId);
+
+                    if (paymentStatus.StatusCode == 5)
+                    {
+                        await _paymentApiService.CaptureDelayedCardPaymentAsync(paymentStatus.RawPaymentId, cart.Summary);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+                break;
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

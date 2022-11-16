@@ -11,4 +11,5 @@ public interface IOrdersRepository
     Task<List<Order>> GetOrdersByUserIdAsync(UserId userId, CancellationToken cancellationToken = default);
     Task<Order?> GetOrderByIdAndUserId(OrderId orderId, UserId userId, CancellationToken cancellationToken = default);
     Task<int> GetNumberOfOrdersFromMonth(int month, int year, CancellationToken cancellationToken = default);
+    Task<Order?> GetOrderByPaymentIdAsync(string paymentId, CancellationToken cancellationToken = default);
 }
