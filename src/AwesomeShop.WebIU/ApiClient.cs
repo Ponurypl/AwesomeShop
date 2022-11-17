@@ -1556,6 +1556,8 @@ namespace OnboardingIntegrationExample.AwesomeShop.Api.Client
 
         CardAuthorization = 1,
 
+        CardDontCapture = 2,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v12.0.0.0))")]

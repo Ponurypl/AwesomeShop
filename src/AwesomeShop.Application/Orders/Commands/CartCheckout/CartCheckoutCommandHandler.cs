@@ -87,6 +87,21 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                     _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
                 }
                 break;
+            case PaymentMethods.CardDontCapture:
+                try
+                {
+                    var paymentStatus =
+                        await _paymentApiService.SetupDelayedCardPaymentAsync(customerId, cart.Summary,
+                                                                              request.CardDetails!);
+
+                    cart.SetWaitingForPaymentStatus();
+                    cart.AddPaymentId(paymentStatus.PaymentId);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+                break;
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
