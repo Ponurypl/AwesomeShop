@@ -42,8 +42,15 @@ public sealed class CartCheckoutEndpoint : Endpoint<CartCheckoutRequest, Order>
             cardDetails = _mapper.Map<Application.Orders.Commands.CartCheckout.CardDetails>(req.CardDetails);
         }
 
+        Application.Orders.Commands.CartCheckout.SavedCardDetails? savedCardDetails = null;
+        if (req.SavedCard is not null)
+        {
+            savedCardDetails = _mapper.Map<Application.Orders.Commands.CartCheckout.SavedCardDetails>(req.SavedCard);
+        }
+
         var command = new CartCheckoutCommand(userId, req.FirstName, req.LastName, req.AddressLine1,
-                                              req.AddressLine2, req.City, req.ZipCode, req.PhoneNumber, paymentMethod, cardDetails);
+                                              req.AddressLine2, req.City, req.ZipCode, req.PhoneNumber, 
+                                              paymentMethod, cardDetails, savedCardDetails);
 
         var resp = await _sender.Send(command, ct);
         if (resp.IsFailure)

@@ -12,4 +12,5 @@ public sealed record CartCheckoutRequest
 
     public PaymentMethods PaymentMethod { get; set; }
     public CardDetails? CardDetails { get; set; }
+    public SavedCardDetails? SavedCard { get; set; }
 }

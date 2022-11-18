@@ -32,4 +32,8 @@
     <ProjectReference Include="..\AwesomeShop.Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="V1\Customer\GetSavedCards\" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 ﻿using OnboardingIntegrationExample.AwesomeShop.Domain.Abstractions;
+using OnboardingIntegrationExample.AwesomeShop.Domain.ValueTypes;
 
 namespace OnboardingIntegrationExample.AwesomeShop.Domain.Entities;
 
@@ -9,6 +10,7 @@ public sealed class User : Entity<UserId>
     public string FirstName { get; private set; } 
     public string LastName { get; private set; }
     public string EmailAddress { get; private set; }
+    public List<CardAlias> CardAliases { get; } = new();
 
     private User(UserId id, string username, string passwordHash, string firstName, string lastName, string emailAddress)
         : base(id)
@@ -33,5 +35,10 @@ public sealed class User : Entity<UserId>
         }
 
         return user;
+    }
+
+    public void AddPaymentToken(string tokenId)
+    {
+        CardAliases.Add(new CardAlias { Id = Guid.NewGuid(), TokenId = tokenId });
     }
 }

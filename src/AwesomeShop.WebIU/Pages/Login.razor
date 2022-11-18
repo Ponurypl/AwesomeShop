@@ -50,7 +50,8 @@
         ApiClient.SetToken(Identity.Token);
 
         var customerResp = await ApiClient.GetCustomerDetailsEndpointAsync();
-        Identity.SetupIdentity(customerResp.FirstName, customerResp.LastName, customerResp.Username, customerResp.EmailAddress);
+        Identity.SetupIdentity(customerResp.FirstName, customerResp.LastName, customerResp.Username, 
+                               customerResp.EmailAddress);
 
         NavigationManager.NavigateTo("/");
     }

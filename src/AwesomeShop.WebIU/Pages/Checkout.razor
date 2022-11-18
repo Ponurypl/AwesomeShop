@@ -1,7 +1,9 @@
 ﻿@page "/checkout"
 @using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
 @inject ApiClient ApiClient
 @inject NavigationManager NavigationManager
+@inject IdentityService Identity
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Checkout</MudText>
@@ -10,60 +12,117 @@
             <MudText Typo="Typo.h5" GutterBottom="true">Billing address</MudText>
             <MudGrid>
                 <MudItem xs="6">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.FirstName" Label="First name" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.FirstName" Label="First name"/>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.LastName" Label="Last name" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.LastName" Label="Last name"/>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine1" Label="Address line 1" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine1" Label="Address line 1"/>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine2" Label="Address line 2" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.AddressLine2" Label="Address line 2"/>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.ZipCode" Label="Postal code" 
-                                  Mask="@(new PatternMask("00-000"))" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.ZipCode" Label="Postal code"
+                                  Mask="@(new PatternMask("00-000"))"/>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.City" Label="City" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.City" Label="City"/>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField T="string" @bind-Value="_checkoutForm.Phone" Label="Phone number" 
-                                  Mask="@(new PatternMask("000 000 000"))" />
+                    <MudTextField T="string" @bind-Value="_checkoutForm.Phone" Label="Phone number"
+                                  Mask="@(new PatternMask("000 000 000"))"/>
                 </MudItem>
                 <MudItem xs="12">
                     <MudText>Payment method:</MudText>
                     <MudRadioGroup @bind-SelectedOption="_paymentMethod">
-                        <MudRadio Option="1">Credit Card (SALE)</MudRadio>
-                        <MudRadio Option="2">Credit Card (AUTHORIZATION)</MudRadio>
-                        <MudRadio Option="3">Credit Card (Don't capture)</MudRadio>
+                        <MudGrid Spacing="0">
+                            @if (_savedCards.Count > 0)
+                            {
+                                <MudItem xs="12">
+                                    <MudRadio Size="Size.Small" Option="4">Use saved card</MudRadio>
+                                </MudItem>
+                            }
+                            <MudItem xs="12">
+                                <MudRadio Size="Size.Small" Option="1">Credit Card (SALE)</MudRadio>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudRadio Size="Size.Small" Option="2">Credit Card (AUTHORIZATION)</MudRadio>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudRadio Size="Size.Small" Option="3">Credit Card (Don't capture)</MudRadio>
+                            </MudItem>
+                        </MudGrid>
                     </MudRadioGroup>
                 </MudItem>
+                @if (_paymentMethod is 4)
+                {
+                    <MudItem xs="12">
+                        <MudText>Saved cards:</MudText>
+                        <MudPaper Elevation="1" Outlined="true" Class="mt-2 pa-5">
+                            <MudGrid Spacing="1">
+                                <MudItem xs="12">
+                                    <MudRadioGroup @bind-SelectedOption="_chosenCard">
+                                        <MudGrid Spacing="0">
+                                            @foreach (var card in _savedCards)
+                                            {
+                                                <MudItem xs="12">
+                                                    <MudRadio Size="Size.Small" Option="@card.Id">
+                                                        @card.CardNumber (@card.ExpiryDate)
+                                                    </MudRadio>
+                                                </MudItem>
+                                            }
+                                        </MudGrid>
+                                    </MudRadioGroup>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudDivider DividerType="DividerType.Middle" Class="my-1" />
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudTextField T="string" Label="CVV" @bind-Value="_chosenCardCvv"
+                                                  Variant="Variant.Outlined" /></MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+                }
                 @if (_paymentMethod is 1 or 2 or 3)
                 {
                     <MudItem xs="12">
-                        <MudGrid>
-                            <MudItem xs="12">
-                                <MudTextField T="string" @bind-Value="_creditCard.CardNumber" Label="Card number"
-                                          Mask="@(new PatternMask("0000 0000 0000 0000"))" />
-                            </MudItem>
-                            <MudItem xs="12">
-                                <MudTextField T="string" @bind-Value="_creditCard.HolderName" Label="Card holder name" />
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudDatePicker @bind-Text="_creditCard.ExpirationDate" Label="Expiration date" 
-                                               DisableToolbar="true" OpenTo="OpenTo.Year" FixDay="1" DateFormat="MM/yy" />
-                            </MudItem>
-                            <MudItem xs="6">
-                                <MudTextField T="string" @bind-Value="_creditCard.CVV" Label="CVV" />
-                            </MudItem>
-                        </MudGrid>
+                        <MudPaper Elevation="1" Outlined="true" Class="pa-5">
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudTextField T="string" @bind-Value="_creditCard.CardNumber" Label="Card number"
+                                                  Mask="@(new PatternMask("0000 0000 0000 0000"))"
+                                                  Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudTextField T="string" @bind-Value="_creditCard.HolderName" Label="Card holder name"
+                                                  Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudDatePicker @bind-Text="_creditCard.ExpirationDate" Label="Expiration date"
+                                                   DisableToolbar="true" OpenTo="OpenTo.Year" FixDay="1" DateFormat="MM/yy"
+                                                   Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudTextField T="string" @bind-Value="_creditCard.CVV" Label="CVV"
+                                                  Variant="Variant.Outlined"/>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudCheckBox T="bool" @bind-Checked="_creditCard.SaveCardDetails">
+                                        Save card details for future transactions.
+                                    </MudCheckBox>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
                     </MudItem>
                 }
                 <MudItem xs="12" Class="d-flex justify-center">
-                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large" 
-                               Class="mt-8" OnClick="ProceedWithOrder">Proceed with order</MudButton>
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large"
+                               Class="mt-8" OnClick="ProceedWithOrder">
+                        Proceed with order
+                    </MudButton>
                 </MudItem>
             </MudGrid>
         </MudItem>
@@ -82,10 +141,12 @@
                     }
                 </MudList>
                 <div class="mt-auto">
-                    <MudDivider />
+                    <MudDivider/>
                     <div class="d-flex pa-4">
                         <MudText>Total:</MudText>
-                        <MudText Class="ml-auto"><b>@_cart.Summary.ToString("N2")</b></MudText>
+                        <MudText Class="ml-auto">
+                            <b>@_cart.Summary.ToString("N2")</b>
+                        </MudText>
                     </div>
                 </div>
             </MudPaper>
@@ -96,7 +157,10 @@
 @code {
     private Models.Cart _cart = new();
     private int _paymentMethod = 0;
+    private Guid _chosenCard;
+    private string _chosenCardCvv;
 
+    private readonly List<Models.SavedCardDetails> _savedCards = new();
     private readonly CheckoutForm _checkoutForm = new();
     private readonly CreditCard _creditCard = new();
 
@@ -117,8 +181,18 @@
                                         Quantity = it.Quantity,
                                         OrderItemId = it.OrderItemId,
                                         ThumbnailFilename = it.ThumbnailFilename
-
                                     });
+            }
+
+            var cards = await ApiClient.GetSavedCardsEndpointAsync();
+            foreach (var card in cards)
+            {
+                _savedCards.Add(new Models.SavedCardDetails
+                                {
+                                    CardNumber = card.CardNumber,
+                                    ExpiryDate = card.ExpiryDate,
+                                    Id = card.Id
+                                });
             }
         }
         catch
@@ -131,22 +205,25 @@
     {
         var paymentMethod = _paymentMethod switch
                             {
-                                1 => PaymentMethods.CardSale,
-                                2 => PaymentMethods.CardAuthorization,
-                                3 => PaymentMethods.CardDontCapture,
-                                _ => throw new ArgumentOutOfRangeException()
+                            1 => PaymentMethods.CardSale,
+                            2 => PaymentMethods.CardAuthorization,
+                            3 => PaymentMethods.CardDontCapture,
+                            4 => PaymentMethods.SavedCardSale,
+                            _ => throw new ArgumentOutOfRangeException()
                             };
-        
+
         CardDetails? cardDetails = null;
         if (paymentMethod is PaymentMethods.CardSale or PaymentMethods.CardAuthorization or PaymentMethods.CardDontCapture)
         {
             cardDetails = new CardDetails
                           {
-                              CardNumber = _creditCard.CardNumber, 
-                              Cvv = _creditCard.CVV, 
-                              ExpirationDate = _creditCard.ExpirationDate, 
-                              HolderName = _creditCard.HolderName
+                              CardNumber = _creditCard.CardNumber,
+                              Cvv = _creditCard.CVV,
+                              ExpirationDate = _creditCard.ExpirationDate,
+                              HolderName = _creditCard.HolderName,
+                              SaveCardInfo = _creditCard.SaveCardDetails
                           };
+            _chosenCard = Guid.Empty;
         }
 
         CartCheckoutRequest request = new()
@@ -159,7 +236,12 @@
                                           City = _checkoutForm.City,
                                           ZipCode = _checkoutForm.ZipCode,
                                           PhoneNumber = _checkoutForm.Phone,
-                                          CardDetails = cardDetails
+                                          CardDetails = cardDetails,
+                                          SavedCard = _chosenCard == Guid.Empty ? null : new SavedCardDetails2
+                                                                                         {
+                                                                                             Id = _chosenCard,
+                                                                                             Cvv = _chosenCardCvv
+                                                                                         }
                                       };
 
         var order = await ApiClient.CartCheckoutEndpointAsync(request);
@@ -168,4 +250,5 @@
             NavigationManager.NavigateTo($"/orders/{order.Id}");
         }
     }
+
 }

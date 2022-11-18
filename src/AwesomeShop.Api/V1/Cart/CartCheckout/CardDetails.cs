@@ -6,4 +6,5 @@ public sealed record CardDetails
     public string CardNumber { get; set; } = default!;
     public string ExpirationDate { get; set; } = default!;
     public string CVV { get; set; } = default!;
+    public bool SaveCardInfo { get; set; }
 }

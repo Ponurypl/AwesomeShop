@@ -2,5 +2,5 @@
 
 public enum PaymentMethods
 {
-    CardSale, CardAuthorization, CardDontCapture
+    CardSale, CardAuthorization, CardDontCapture, SavedCardSale
 }

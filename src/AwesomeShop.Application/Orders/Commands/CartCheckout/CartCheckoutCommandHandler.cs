@@ -11,6 +11,7 @@ namespace OnboardingIntegrationExample.AwesomeShop.Application.Orders.Commands.C
 public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCommand, OrderDto>
 {
     private readonly IOrdersRepository _ordersRepository;
+    private readonly IUsersRepository _usersRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderNumberGenService _orderNumberGenService;
     private readonly IDateTime _dateTime;
@@ -18,11 +19,12 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
     private readonly IPaymentApiService _paymentApiService;
     private readonly ILogger<CartCheckoutCommandHandler> _logger;
 
-    public CartCheckoutCommandHandler(IOrdersRepository ordersRepository, IUnitOfWork unitOfWork,
-                                      IOrderNumberGenService orderNumberGenService, IDateTime dateTime, IMapper mapper,
-                                      IPaymentApiService paymentApiService, ILogger<CartCheckoutCommandHandler> logger)
+    public CartCheckoutCommandHandler(IOrdersRepository ordersRepository, IUsersRepository usersRepository,
+                                      IUnitOfWork unitOfWork, IOrderNumberGenService orderNumberGenService, IDateTime dateTime,
+                                      IMapper mapper, IPaymentApiService paymentApiService, ILogger<CartCheckoutCommandHandler> logger)
     {
         _ordersRepository = ordersRepository;
+        _usersRepository = usersRepository;
         _unitOfWork = unitOfWork;
         _orderNumberGenService = orderNumberGenService;
         _dateTime = dateTime;
@@ -56,6 +58,12 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                     cart.SetWaitingForPaymentStatus();
                     cart.AddPaymentId(paymentStatus.PaymentId);
 
+                    if (paymentStatus.TokenId is not null)
+                    {
+                        var user = await _usersRepository.GetByIdAsync(customerId, cancellationToken);
+                        user!.AddPaymentToken(paymentStatus.TokenId);
+                    }
+
                     if (paymentStatus.StatusCode == 9)
                     {
                         cart.SetPaidStatus();
@@ -77,6 +85,12 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                     cart.SetWaitingForPaymentStatus();
                     cart.AddPaymentId(paymentStatus.PaymentId);
 
+                    if (paymentStatus.TokenId is not null)
+                    {
+                        var user = await _usersRepository.GetByIdAsync(customerId, cancellationToken);
+                        user!.AddPaymentToken(paymentStatus.TokenId);
+                    }
+
                     if (paymentStatus.StatusCode == 5)
                     {
                         await _paymentApiService.CaptureDelayedCardPaymentAsync(paymentStatus.RawPaymentId, cart.Summary);
@@ -96,6 +110,40 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
 
                     cart.SetWaitingForPaymentStatus();
                     cart.AddPaymentId(paymentStatus.PaymentId);
+
+                    if (paymentStatus.TokenId is not null)
+                    {
+                        var user = await _usersRepository.GetByIdAsync(customerId, cancellationToken);
+                        user!.AddPaymentToken(paymentStatus.TokenId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+                break;
+            case PaymentMethods.SavedCardSale:
+                try
+                {
+                    var user = await _usersRepository.GetByIdAsync(customerId, cancellationToken);
+                    var token = user!.CardAliases.FirstOrDefault(a => a.Id == request.savedCard!.Id);
+
+                    if (token is null)
+                    {
+                        Result.Failure<OrderDto>(Failures.InvalidToken);
+                    }
+
+                    var paymentStatus =
+                        await _paymentApiService.PayByToken(customerId, cart.Summary, token!.TokenId,
+                                                            request.savedCard!.CVV);
+
+                    cart.SetWaitingForPaymentStatus();
+                    cart.AddPaymentId(paymentStatus.PaymentId);
+
+                    if (paymentStatus.StatusCode == 9)
+                    {
+                        cart.SetPaidStatus();
+                    }
                 }
                 catch (Exception e)
                 {

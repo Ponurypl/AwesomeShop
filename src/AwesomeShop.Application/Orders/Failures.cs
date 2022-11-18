@@ -13,4 +13,5 @@ public static class Failures
 
     public static Error OrderNotExists => new(nameof(OrderNotExists), "Order doesn't exists");
     public static Error PaymentException => new(nameof(PaymentException), "There was problem with payment");
+    public static Error InvalidToken => new (nameof(InvalidToken), "Invalid token");
 }

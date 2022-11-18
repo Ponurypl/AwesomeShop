@@ -8,6 +8,7 @@ public sealed class Mapper : IRegister
     {
         config.NewConfig<PaymentMethods, Application.Orders.Commands.CartCheckout.PaymentMethods>();
         config.NewConfig<CardDetails, Application.Orders.Commands.CartCheckout.CardDetails>();
+        config.NewConfig<SavedCardDetails, Application.Orders.Commands.CartCheckout.SavedCardDetails>();
         config.NewConfig<OrderDto, Order>();
     }
 }
