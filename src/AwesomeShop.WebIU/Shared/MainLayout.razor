@@ -1,6 +1,7 @@
-﻿@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @inject IdentityService Identity
+@inject IJSRuntime JSRuntime  
+@inject NavigationManager NavigationManager
 
 <MudThemeProvider IsDarkMode="true" />
 <MudDialogProvider />
@@ -18,7 +19,7 @@
             <MudMenu Label="@($"{Identity.FirstName} {Identity.LastName}")" Color="Color.Primary" AnchorOrigin="Origin.BottomRight"
                  EndIcon="@Icons.Filled.KeyboardArrowDown">
                 <MudMenuItem Icon="@Icons.Filled.ViewList" Href="/orders">Orders</MudMenuItem>
-                <MudMenuItem OnClick="Identity.SignOut" Href="/" Icon="@Icons.Filled.Logout">Logout</MudMenuItem>
+                <MudMenuItem OnClick="SignOut" Icon="@Icons.Filled.Logout">Logout</MudMenuItem>
             </MudMenu>
         }
         else
@@ -40,6 +41,20 @@
 @code {
     bool _drawerOpen = true;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "identity");
+        Identity.Restore(token);
+    }
+
+    private async void SignOut()
+    {
+        Identity.SignOut();
+        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "identity");
+        StateHasChanged();
+        NavigationManager.NavigateTo("/");
+    }
+    
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;

@@ -4,6 +4,7 @@
 @inject ApiClient ApiClient
 @inject IdentityService Identity
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
@@ -52,6 +53,9 @@
         var customerResp = await ApiClient.GetCustomerDetailsEndpointAsync();
         Identity.SetupIdentity(customerResp.FirstName, customerResp.LastName, customerResp.Username, 
                                customerResp.EmailAddress);
+
+        var t = Identity.Tokenize();
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "identity", t);
 
         NavigationManager.NavigateTo("/");
     }

@@ -44,4 +44,26 @@ public class IdentityService
         ExpireAt = null;
         Token = null;
     }
+
+    public string Tokenize()
+    {
+        var token = $"{FirstName}_{LastName}_{Username}_{EmailAddress}_{Token}_{ExpireAt:O}";
+        return token;
+    }
+
+    public void Restore(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return;
+        }
+
+        var parts = token.Split("_");
+        FirstName = parts[0];
+        LastName = parts[1];
+        Username = parts[2];
+        EmailAddress = parts[3];
+        Token = parts[4];
+        ExpireAt = DateTimeOffset.Parse(parts[5]);
+    }
 }
