@@ -9,8 +9,10 @@ public sealed record CartCheckoutRequest
     public string City { get; set; } = default!;
     public string ZipCode { get; set; } = default!;
     public string PhoneNumber { get; set; } = default!;
+    public Guid CheckoutId { get; set; }
 
     public PaymentMethods PaymentMethod { get; set; }
     public CardDetails? CardDetails { get; set; }
     public SavedCardDetails? SavedCard { get; set; }
+    public string? ReturnUrl { get; set; }
 }

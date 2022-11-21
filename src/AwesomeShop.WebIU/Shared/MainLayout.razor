@@ -1,7 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject IdentityService Identity
-@inject IJSRuntime JSRuntime  
+@inject IJSRuntime JsRuntime  
 @inject NavigationManager NavigationManager
+@inject ApiClient ApiClient
 
 <MudThemeProvider IsDarkMode="true" />
 <MudDialogProvider />
@@ -40,17 +41,20 @@
 
 @code {
     bool _drawerOpen = true;
-
-    protected override async Task OnInitializedAsync()
+    
+    protected override void OnInitialized()
     {
-        var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "identity");
+        var js = (IJSInProcessRuntime)JsRuntime;
+        var token = js.Invoke<string>("localStorage.getItem", "identity");
         Identity.Restore(token);
+        ApiClient.SetToken(Identity.Token);
     }
 
     private async void SignOut()
     {
         Identity.SignOut();
-        await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "identity");
+        await JsRuntime.InvokeAsync<string>("localStorage.removeItem", "identity");
+        ApiClient.ClearToken();
         StateHasChanged();
         NavigationManager.NavigateTo("/");
     }

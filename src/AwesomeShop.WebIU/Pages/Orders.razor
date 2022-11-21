@@ -4,7 +4,8 @@
 @inject NavigationManager NavigationManager
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
-    <MudTable Items="_orders" Loading="_loading" Hover="true" Dense="true" Bordered="true" OnRowClick="RowClick" T="OrderHeader">
+    <MudTable Items="_orders" Loading="_loading" Hover="true" Dense="true" Bordered="true" OnRowClick="RowClick" T="OrderHeader" 
+              RowsPerPage="20">
         <HeaderContent>
             <MudTh>Number</MudTh>
             <MudTh>Status</MudTh>
@@ -17,6 +18,9 @@
             <MudTd DataLabel="Creation date">@context.CreationDate.ToString("yyyy-MM-dd HH:mm:ss")</MudTd>
             <MudTd DataLabel="Summary">@context.Summary.ToString("N2") €</MudTd>
         </RowTemplate>
+        <PagerContent>
+            <MudTablePager HorizontalAlignment="HorizontalAlignment.End" PageSizeOptions="@(new []{ 20 })" />
+        </PagerContent>
     </MudTable>
 </MudContainer>
 

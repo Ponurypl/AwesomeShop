@@ -182,7 +182,7 @@ public sealed class WorldLineApiService : IPaymentApiService
                };
     }
 
-    public async Task<PaymentDetails> PayByToken(UserId customerId, double paymentAmount, string tokenId, string cvv)
+    public async Task<PaymentDetails> PayByTokenAsync(UserId customerId, double paymentAmount, string tokenId, string cvv)
     {
         var client = Factory.CreateClient(_configuration.ApiKey, _configuration.ApiSecret, _apiUri, "AwesomeShop");
         
@@ -225,6 +225,104 @@ public sealed class WorldLineApiService : IPaymentApiService
             PaymentId = createPaymentResponse.Payment.Id.Split("_")[0],
             RawPaymentId = createPaymentResponse.Payment.Id,
             StatusCode = createPaymentResponse.Payment.StatusOutput.StatusCode!.Value
+        };
+    }
+
+    public async Task<HostedCheckoutDetails> CreateHostedSalePaymentAsync(UserId customerId, double paymentAmount, string returnUrl)
+    {
+        var client = Factory.CreateClient(_configuration.ApiKey, _configuration.ApiSecret, _apiUri, "AwesomeShop");
+        
+        Order order = new()
+                      {
+                          AmountOfMoney = new AmountOfMoney()
+                                          {
+                                              CurrencyCode = "EUR",
+                                              Amount = Convert.ToInt64(paymentAmount * 100)
+                                          },
+                          Customer = new Customer()
+                                     {
+                                         MerchantCustomerId = customerId.Value.ToString()
+                                     }
+                      };
+
+        var hostedCheckoutRequest = new CreateHostedCheckoutRequest
+                                    {
+                                        Order = order,
+                                        CardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInputBase
+                                                                         {
+                                                                             AuthorizationMode = AuthorizationMode.Sale
+                                                                         },
+                                        HostedCheckoutSpecificInput = new HostedCheckoutSpecificInput()
+                                                                      {
+                                                                          ReturnUrl = returnUrl
+                                                                      }
+                                    };
+
+        var createHostedCheckoutResponse = await client.WithNewMerchant(PSPID)
+                                                       .HostedCheckout
+                                                       .CreateHostedCheckout(hostedCheckoutRequest);
+
+        return new HostedCheckoutDetails()
+               {
+                   Id = createHostedCheckoutResponse.HostedCheckoutId,
+                   RedirectUrl = createHostedCheckoutResponse.RedirectUrl
+               };
+    }
+
+    public async Task<HostedCheckoutDetails> CreateHostedAuthorizationPaymentAsync(UserId customerId, double paymentAmount, string returnUrl)
+    {
+        var client = Factory.CreateClient(_configuration.ApiKey, _configuration.ApiSecret, _apiUri, "AwesomeShop");
+
+        Order order = new()
+        {
+            AmountOfMoney = new AmountOfMoney()
+            {
+                CurrencyCode = "EUR",
+                Amount = Convert.ToInt64(paymentAmount * 100)
+            },
+            Customer = new Customer()
+            {
+                MerchantCustomerId = customerId.Value.ToString()
+            }
+        };
+
+        var hostedCheckoutRequest = new CreateHostedCheckoutRequest
+        {
+            Order = order,
+            CardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInputBase
+            {
+                AuthorizationMode = AuthorizationMode.FinalAuthorization
+            },
+            HostedCheckoutSpecificInput = new HostedCheckoutSpecificInput()
+            {
+                ReturnUrl = returnUrl
+            }
+        };
+
+        var createHostedCheckoutResponse = await client.WithNewMerchant(PSPID)
+                                                       .HostedCheckout
+                                                       .CreateHostedCheckout(hostedCheckoutRequest);
+
+        return new HostedCheckoutDetails()
+        {
+            Id = createHostedCheckoutResponse.HostedCheckoutId,
+            RedirectUrl = createHostedCheckoutResponse.RedirectUrl
+        };
+    }
+
+    public async Task<PaymentDetails> GetHostedCheckoutStatusAsync(string hostedPaymentId)
+    {
+        var client = Factory.CreateClient(_configuration.ApiKey, _configuration.ApiSecret, _apiUri, "AwesomeShop");
+        
+
+        var hostedCheckout = await client.WithNewMerchant(PSPID)
+                                                       .HostedCheckout
+                                                       .GetHostedCheckout(hostedPaymentId);
+        return new PaymentDetails()
+        {
+            PaymentId = hostedCheckout.CreatedPaymentOutput.Payment.Id.Split("_")[0],
+            RawPaymentId = hostedCheckout.CreatedPaymentOutput.Payment.Id,
+            StatusCode = hostedCheckout.CreatedPaymentOutput.Payment.StatusOutput.StatusCode!.Value
         };
     }
 

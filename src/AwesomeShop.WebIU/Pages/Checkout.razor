@@ -1,6 +1,5 @@
 ﻿@page "/checkout"
 @using OnboardingIntegrationExample.AwesomeShop.WebIU.Models
-@using OnboardingIntegrationExample.AwesomeShop.WebIU.Services
 @inject ApiClient ApiClient
 @inject NavigationManager NavigationManager
 @inject IdentityService Identity
@@ -52,6 +51,12 @@
                             </MudItem>
                             <MudItem xs="12">
                                 <MudRadio Size="Size.Small" Option="3">Credit Card (Don't capture)</MudRadio>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudRadio Size="Size.Small" Option="5">Hosted checkout (SALE)</MudRadio>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudRadio Size="Size.Small" Option="6">Hosted checkout (AUTHORIZATION)</MudRadio>
                             </MudItem>
                         </MudGrid>
                     </MudRadioGroup>
@@ -209,6 +214,8 @@
                             2 => PaymentMethods.CardAuthorization,
                             3 => PaymentMethods.CardDontCapture,
                             4 => PaymentMethods.SavedCardSale,
+                            5 => PaymentMethods.HostedSale,
+                            6 => PaymentMethods.HostedAuthorization,
                             _ => throw new ArgumentOutOfRangeException()
                             };
 
@@ -226,6 +233,8 @@
             _chosenCard = Guid.Empty;
         }
 
+        Guid checkoutId = Guid.NewGuid();
+
         CartCheckoutRequest request = new()
                                       {
                                           PaymentMethod = paymentMethod,
@@ -241,13 +250,15 @@
                                                                                          {
                                                                                              Id = _chosenCard,
                                                                                              Cvv = _chosenCardCvv
-                                                                                         }
+                                                                                         },
+                                          ReturnUrl = NavigationManager.ToAbsoluteUri($"/checkout/{checkoutId}").ToString(),
+                                          CheckoutId = checkoutId
                                       };
 
         var order = await ApiClient.CartCheckoutEndpointAsync(request);
         if (order is not null)
         {
-            NavigationManager.NavigateTo($"/orders/{order.Id}");
+            NavigationManager.NavigateTo(order.RedirectUrl ?? $"/orders/{order.Id}");
         }
     }
 

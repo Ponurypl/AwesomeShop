@@ -47,7 +47,7 @@ public class IdentityService
 
     public string Tokenize()
     {
-        var token = $"{FirstName}_{LastName}_{Username}_{EmailAddress}_{Token}_{ExpireAt:O}";
+        var token = $"{FirstName};{LastName};{Username};{EmailAddress};{Token};{ExpireAt:O}";
         return token;
     }
 
@@ -58,7 +58,7 @@ public class IdentityService
             return;
         }
 
-        var parts = token.Split("_");
+        var parts = token.Split(";");
         FirstName = parts[0];
         LastName = parts[1];
         Username = parts[2];

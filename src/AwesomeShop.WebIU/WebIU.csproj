@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.10" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="MudBlazor" Version="6.0.17" />
     <PackageReference Include="MudBlazor.Markdown" Version="0.0.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -22,12 +23,14 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Checkout.razor" />
+    <_ContentIncludedByDefault Remove="Pages\CheckoutConfirmation.razor" />
     <_ContentIncludedByDefault Remove="Pages\Login.razor" />
     <_ContentIncludedByDefault Remove="Pages\OrderDetails.razor" />
     <_ContentIncludedByDefault Remove="Pages\Products.razor" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
@@ -41,6 +44,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\OrderDetails.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\CheckoutConfirmation.razor" />
   </ItemGroup>
 
 </Project>

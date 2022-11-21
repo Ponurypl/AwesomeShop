@@ -9,6 +9,11 @@ public partial class ApiClient
         _token = token;
     }
 
+    public void ClearToken()
+    {
+        _token = null;
+    }
+
     partial void PrepareRequest(HttpClient client, HttpRequestMessage request, string url)
     {
         if (!string.IsNullOrWhiteSpace(_token))

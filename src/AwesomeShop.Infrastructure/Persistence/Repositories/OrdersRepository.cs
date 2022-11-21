@@ -56,4 +56,11 @@ internal sealed class OrdersRepository : IOrdersRepository
     {
         return await _orders.FirstOrDefaultAsync(o => o.PaymentId == paymentId, cancellationToken);
     }
+
+    public async Task<Order?> GetOrderByCheckoutIdAndHostedPaymentIdAsync(Guid checkoutId, string hostedPaymentId,
+                                                                    CancellationToken cancellationToken = default)
+    {
+        return await _orders.FirstOrDefaultAsync(o => o.HostedPaymentId == hostedPaymentId && o.CheckoutId == checkoutId,
+                                            cancellationToken);
+    }
 }

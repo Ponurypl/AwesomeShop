@@ -15,7 +15,9 @@ public sealed class Order : Entity<OrderId>
     public string? Number { get; private set; }
     public RecipientDetails? Recipient { get; private set; }
     public DateTime? CreationDate { get; private set; }
+    public Guid? CheckoutId { get; set; }
     public string? PaymentId { get; private set; }
+    public string? HostedPaymentId { get; set; }
 
 
     private Order(OrderId id ,UserId customerId) 
@@ -62,14 +64,16 @@ public sealed class Order : Entity<OrderId>
         RecalculateSummary();
     }
 
-    public void ProcessCheckout(string number, string firstName, string lastName, string addressLine1, string? addressLine2,
-                                string city, string zipCode, string phoneNumber, DateTime orderTime)
+    public void ProcessCheckout(string number, string firstName, string lastName, string addressLine1,
+                                string? addressLine2, string city, string zipCode, string phoneNumber, 
+                                DateTime orderTime, Guid checkoutId)
     {
         Number = number;
         Recipient = RecipientDetails.Create(firstName, lastName, addressLine1, addressLine2, city, zipCode,
                                             phoneNumber);
         Status = OrderStatus.Created;
         CreationDate = orderTime;
+        CheckoutId = checkoutId;
     }
 
     private void RecalculateSummary()
@@ -90,5 +94,10 @@ public sealed class Order : Entity<OrderId>
     public void SetPaidStatus()
     {
         Status = OrderStatus.Paid;
+    }
+
+    public void AddHostedPaymentId(string hostedPaymentId)
+    {
+        HostedPaymentId = hostedPaymentId;
     }
 }

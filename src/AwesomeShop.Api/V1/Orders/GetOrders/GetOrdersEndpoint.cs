@@ -35,6 +35,6 @@ public sealed class GetOrdersEndpoint : EndpointWithoutRequest<List<Order>>
             return;
         }
 
-        await SendOkAsync(_mapper.Map<List<Order>>(result.Value), ct);
+        await SendOkAsync(_mapper.Map<List<Order>>(result.Value.OrderByDescending(o => o.CreationDate)), ct);
     }
 }

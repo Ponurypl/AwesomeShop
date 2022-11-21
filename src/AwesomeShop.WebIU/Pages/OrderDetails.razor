@@ -204,6 +204,8 @@
         if (_order?.PaymentId is not null) 
         {
             var events = await ApiClient.GetWebhookEventsEndpointAsync(_order.PaymentId);
+            bool change = false;
+
             foreach (var we in events)
             {
                 if (_events.Exists(e => e.Id == we.Id))
@@ -221,6 +223,17 @@
                                 ReceivedAt = we.ReceivedAt,
                                 Payload = payload
                             });
+
+                change = true;
+            }
+
+            if (change)
+            {
+                var order = await ApiClient.GetOrderByIdEndpointAsync(Guid.Parse(OrderId));
+                if (order is not null)
+                {
+                    _order.Status = order.Status;
+                }
             }
         }
     }

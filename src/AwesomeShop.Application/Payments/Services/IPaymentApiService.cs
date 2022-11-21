@@ -10,5 +10,10 @@ public interface IPaymentApiService
     Task<PaymentDetails> SetupDelayedCardPaymentAsync(UserId customerId, double paymentAmount, CardDetails cardDetails);
     Task<PaymentDetails> CaptureDelayedCardPaymentAsync(string paymentId, double paymentAmount);
     Task<TokenDetails> GetTokenInfoAsync(string tokenId);
-    Task<PaymentDetails> PayByToken(UserId customerId, double paymentAmount, string tokenId, string cvv);
+    Task<PaymentDetails> PayByTokenAsync(UserId customerId, double paymentAmount, string tokenId, string cvv);
+    Task<HostedCheckoutDetails> CreateHostedSalePaymentAsync(UserId customerId, double paymentAmount, string returnUrl);
+
+    Task<HostedCheckoutDetails> CreateHostedAuthorizationPaymentAsync(UserId customerId, double paymentAmount,
+                                                                      string returnUrl);
+    Task<PaymentDetails> GetHostedCheckoutStatusAsync(string hostedPaymentId);
 }

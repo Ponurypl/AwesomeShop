@@ -6,4 +6,5 @@ public sealed record OrderDto
     public string Number { get; set; } = default!;
     public string Status { get; set; } = default!;
     public double Summary { get; set; }
+    public string? RedirectUrl { get; set; }
 }

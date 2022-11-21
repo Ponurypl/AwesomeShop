@@ -1,0 +1,49 @@
+﻿@page "/checkout/{CheckoutId}"
+@using OnboardingIntegrationExample.AwesomeShop.WebIU.Common
+@inject NavigationManager NavigationManager
+@inject ApiClient ApiClient
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    @if (!_error)
+    {
+        <MudText Typo="Typo.h6" Align="Align.Center" GutterBottom="true">Validating your payment</MudText>
+        <div style="display: flex;justify-content: center;align-items: center;">
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" Style="margin-left:auto; margin-right:auto;" />
+        </div>
+    }
+</MudContainer>
+
+@code {
+
+    [Parameter]
+    public string CheckoutId { get; set; } = default!;
+
+    private bool _error;
+    private string _hostedCheckoutId;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(!NavigationManager.TryGetQueryString("hostedCheckoutId", out string hostedCheckoutId))
+        {
+            _error = true;
+            return;
+        }
+
+        _hostedCheckoutId = hostedCheckoutId;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var resp = await ApiClient.ValidateHostedCheckoutEndpointAsync(new ValidateHostedCheckoutRequest
+                                                                {
+                                                                    CheckoutId = Guid.Parse(CheckoutId),
+                                                                    HostedPaymentId = _hostedCheckoutId
+                                                                });
+
+            NavigationManager.NavigateTo($"/orders/{resp.Id}");
+        }
+    }
+
+}

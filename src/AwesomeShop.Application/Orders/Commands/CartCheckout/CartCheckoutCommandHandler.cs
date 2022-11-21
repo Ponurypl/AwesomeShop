@@ -35,6 +35,7 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
 
     public async Task<Result<OrderDto>> Handle(CartCheckoutCommand request, CancellationToken cancellationToken)
     {
+        string? redirectUrl = null;
         var customerId = new UserId(request.UserId);
         var cart = await _ordersRepository.GetCartOrderByUserIdAsync(customerId, cancellationToken);
 
@@ -46,7 +47,7 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
         var orderNumber = await _orderNumberGenService.GenerateOrderNumberAsync(cancellationToken);
 
         cart.ProcessCheckout(orderNumber, request.FirstName, request.LastName, request.AddressLine1, request.AddressLine2,
-                             request.City, request.ZipCode, request.PhoneNumber, _dateTime.UtcNow);
+                             request.City, request.ZipCode, request.PhoneNumber, _dateTime.UtcNow, request.CheckoutId);
         
         switch (request.PaymentMethod)
         {
@@ -126,7 +127,7 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                 try
                 {
                     var user = await _usersRepository.GetByIdAsync(customerId, cancellationToken);
-                    var token = user!.CardAliases.FirstOrDefault(a => a.Id == request.savedCard!.Id);
+                    var token = user!.CardAliases.FirstOrDefault(a => a.Id == request.SavedCard!.Id);
 
                     if (token is null)
                     {
@@ -134,8 +135,8 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                     }
 
                     var paymentStatus =
-                        await _paymentApiService.PayByToken(customerId, cart.Summary, token!.TokenId,
-                                                            request.savedCard!.CVV);
+                        await _paymentApiService.PayByTokenAsync(customerId, cart.Summary, token!.TokenId,
+                                                            request.SavedCard!.CVV);
 
                     cart.SetWaitingForPaymentStatus();
                     cart.AddPaymentId(paymentStatus.PaymentId);
@@ -150,9 +151,48 @@ public sealed class CartCheckoutCommandHandler : ICommandHandler<CartCheckoutCom
                     _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
                 }
                 break;
+            case PaymentMethods.HostedSale:
+                try
+                {
+                    var paymentStatus = await _paymentApiService.CreateHostedSalePaymentAsync(customerId, cart.Summary, request.RedirectUrl!);
+
+                    cart.SetWaitingForPaymentStatus();
+                    redirectUrl = paymentStatus.RedirectUrl;
+
+                    cart.AddHostedPaymentId(paymentStatus.Id);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+                break;
+            case PaymentMethods.HostedAuthorization:
+                try
+                {
+                    var paymentStatus = await _paymentApiService.CreateHostedAuthorizationPaymentAsync(customerId, cart.Summary, request.RedirectUrl!);
+
+                    cart.SetWaitingForPaymentStatus();
+                    redirectUrl = paymentStatus.RedirectUrl;
+
+                    cart.AddHostedPaymentId(paymentStatus.Id);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, "Cart payment was unsuccessful due to an error");
+                }
+                break;
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return Result.Success(_mapper.Map<OrderDto>(cart));
+        return Result.Success(new OrderDto()
+                              {
+                                  Id = cart.Id.Value,
+                                  Number = cart.Number!,
+                                  Status = cart.Status.ToString(),
+                                  Summary = cart.Summary,
+                                  RedirectUrl = redirectUrl
+                              });
     }
 }
